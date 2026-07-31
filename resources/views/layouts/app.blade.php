@@ -20,6 +20,7 @@
     <link rel="stylesheet" href="{{ asset('css/applicant-registration.css') }}">
     <link rel="stylesheet" href="{{ asset('css/applicant-management.css') }}">
     <link rel="stylesheet" href="{{ asset('css/user-management.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/email-templates.css') }}">
 
     @stack('styles')
 
@@ -89,6 +90,12 @@
                                     Users
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ request()->routeIs('admin.email-templates.*') ? 'active' : '' }}"
+                                    href="{{ route('admin.email-templates.index') }}">
+                                    <i class="bi bi-envelope-paper me-1"></i> Email Templates
+                                </a>
+                            </li>
 
                         @endauth
 
@@ -143,6 +150,12 @@
                                         <a class="dropdown-item" href="{{ route('admin.users.index') }}">
                                             <i class="bi bi-person-gear me-2"></i>
                                             User Management
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="{{ route('admin.email-templates.index') }}">
+                                            <i class="bi bi-person-gear me-2"></i>
+                                            Email Templates
                                         </a>
                                     </li>
                                     <li>

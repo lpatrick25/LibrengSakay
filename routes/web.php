@@ -3,6 +3,7 @@
 use App\Http\Controllers\ApplicantManagementController;
 use App\Http\Controllers\ApplicantRegistrationController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\EmailTemplateController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -59,5 +60,15 @@ Route::middleware('auth')->prefix('admin')->group(function () {
         Route::post('/', [UserController::class, 'store'])->name('store');
         Route::put('/{id}', [UserController::class, 'update'])->name('update')->whereNumber('id');
         Route::delete('/{id}', [UserController::class, 'destroy'])->name('destroy')->whereNumber('id');
+    });
+
+    Route::prefix('email-templates')->name('admin.email-templates.')->group(function () {
+        Route::get('/', [EmailTemplateController::class, 'index'])->name('index');
+        Route::get('/data', [EmailTemplateController::class, 'data'])->name('data');
+        Route::get('/{id}', [EmailTemplateController::class, 'show'])->name('show')->whereNumber('id');
+        Route::put('/{id}', [EmailTemplateController::class, 'update'])->name('update')->whereNumber('id');
+        Route::post('/{id}/toggle', [EmailTemplateController::class, 'toggle'])->name('toggle')->whereNumber('id');
+        Route::post('/{id}/preview', [EmailTemplateController::class, 'preview'])->name('preview')->whereNumber('id');
+        Route::post('/{id}/test', [EmailTemplateController::class, 'sendTest'])->name('test')->whereNumber('id');
     });
 });

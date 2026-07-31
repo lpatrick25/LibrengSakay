@@ -1,0 +1,131 @@
+/* ==========================================================================
+   Email Template Management
+   ========================================================================== */
+
+/* ---------- Template Cards ---------- */
+
+.template-card {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(255, 193, 7, 0.15);
+    border-radius: 1rem;
+    transition:
+        transform var(--transition-fast),
+        box-shadow var(--transition-fast),
+        border-color var(--transition-fast);
+}
+
+.template-card::before {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 4px;
+    background: linear-gradient(
+        to bottom,
+        var(--honey-gold),
+        var(--honey-amber)
+    );
+}
+
+.template-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(255, 193, 7, 0.35);
+    box-shadow: var(--card-hover-shadow);
+}
+
+/* ---------- Template Icon ---------- */
+
+.template-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: linear-gradient(
+        135deg,
+        rgba(255, 193, 7, 0.18),
+        rgba(255, 152, 0, 0.12)
+    );
+
+    color: var(--honey-dark);
+    flex-shrink: 0;
+}
+
+.template-icon i {
+    font-size: 1.4rem;
+}
+
+/* ---------- CKEditor ---------- */
+
+#editor-container .ck.ck-editor {
+    width: 100%;
+}
+
+#editor-container .ck-editor__editable {
+    min-height: 320px;
+    max-height: 520px;
+    padding: 1.25rem;
+    font-size: 0.95rem;
+    line-height: 1.7;
+    background: #fffdf8;
+}
+
+#editor-container .ck.ck-toolbar {
+    border-radius: 1rem 1rem 0 0;
+}
+
+#editor-container .ck.ck-editor__main > .ck-editor__editable {
+    border-radius: 0 0 1rem 1rem;
+}
+
+/* ---------- Placeholders ---------- */
+
+.placeholder-item {
+    border-radius: 0.9rem;
+    transition: background 0.2s ease;
+}
+
+.placeholder-item:hover {
+    background: rgba(255, 193, 7, 0.08);
+}
+
+.placeholder-item code {
+    display: inline-block;
+    padding: 0.35rem 0.65rem;
+    border-radius: 999px;
+
+    background: rgba(255, 193, 7, 0.15);
+    border: 1px solid rgba(255, 193, 7, 0.25);
+
+    color: var(--honey-dark);
+
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+
+.btn-copy-ph {
+    flex-shrink: 0;
+}
+
+/* ---------- Preview ---------- */
+
+.template-preview {
+    background: #fffdf8;
+    border: 1px dashed rgba(255, 193, 7, 0.25);
+    border-radius: 1rem;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 768px) {
+    .template-icon {
+        width: 48px;
+        height: 48px;
+    }
+
+    #editor-container .ck-editor__editable {
+        min-height: 240px;
+    }
+}

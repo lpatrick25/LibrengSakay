@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\TemplatedMail;
 use App\Models\Applicant;
+use App\Services\EmailTemplateRenderer;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -51,11 +54,11 @@ class ApplicantManagementController extends Controller
         if ($search = $request->input('search')) {
             $query->where(function ($q) use ($search) {
                 $q->where('last_name', 'like', "%{$search}%")
-                  ->orWhere('first_name', 'like', "%{$search}%")
-                  ->orWhere('middle_name', 'like', "%{$search}%")
-                  ->orWhere('contact_number', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%")
-                  ->orWhere('place_of_examination', 'like', "%{$search}%");
+                    ->orWhere('first_name', 'like', "%{$search}%")
+                    ->orWhere('middle_name', 'like', "%{$search}%")
+                    ->orWhere('contact_number', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('place_of_examination', 'like', "%{$search}%");
             });
         }
 
@@ -106,9 +109,16 @@ class ApplicantManagementController extends Controller
         $order = strtolower($request->input('order', 'desc')) === 'asc' ? 'asc' : 'desc';
 
         $allowedSorts = [
-            'id', 'last_name', 'first_name', 'applicant_type',
-            'place_of_examination', 'contact_number', 'email',
-            'verification_status', 'id_status', 'created_at',
+            'id',
+            'last_name',
+            'first_name',
+            'applicant_type',
+            'place_of_examination',
+            'contact_number',
+            'email',
+            'verification_status',
+            'id_status',
+            'created_at',
         ];
 
         if (in_array($sort, $allowedSorts, true)) {
@@ -204,9 +214,18 @@ class ApplicantManagementController extends Controller
             'remarks'             => $request->input('remarks'),
         ]);
 
+        $emailSent = $this->sendApplicantNotification($applicant, 'applicant_approved');
+
+        $message = 'Applicant has been verified successfully.';
+        if ($emailSent === true) {
+            $message .= ' Notification email sent.';
+        } elseif ($emailSent === false) {
+            $message .= ' Notification email could not be sent.';
+        }
+
         return response()->json([
             'success' => true,
-            'message' => 'Applicant has been verified successfully.',
+            'message' => $message,
         ]);
     }
 
@@ -228,9 +247,18 @@ class ApplicantManagementController extends Controller
             'remarks'             => $request->input('remarks'),
         ]);
 
+        $emailSent = $this->sendApplicantNotification($applicant, 'applicant_rejected');
+
+        $message = 'Applicant has been rejected.';
+        if ($emailSent === true) {
+            $message .= ' Notification email sent.';
+        } elseif ($emailSent === false) {
+            $message .= ' Notification email could not be sent.';
+        }
+
         return response()->json([
             'success' => true,
-            'message' => 'Applicant has been rejected.',
+            'message' => $message,
         ]);
     }
 
@@ -267,5 +295,37 @@ class ApplicantManagementController extends Controller
         $filename = 'ID_' . $applicant->id . '_' . $applicant->last_name . '.' . pathinfo($applicant->identification_path, PATHINFO_EXTENSION);
 
         return Storage::disk('public')->download($applicant->identification_path, $filename);
+    }
+
+    /**
+     * Render and send a templated notification email to the applicant.
+     *
+     * @return bool|null  true = sent, false = failed, null = skipped (no email / inactive template)
+     */
+    protected function sendApplicantNotification(Applicant $applicant, string $templateSlug): ?bool
+    {
+        if (empty($applicant->email)) {
+            return null;
+        }
+
+        $renderer = app(EmailTemplateRenderer::class);
+        $rendered = $renderer->renderForApplicant($templateSlug, $applicant);
+
+        if ($rendered === null) {
+            // Template missing or inactive
+            return null;
+        }
+
+        try {
+            Mail::to($applicant->email)->send(
+                new TemplatedMail($rendered['subject'], $rendered['body'])
+            );
+
+            return true;
+        } catch (\Throwable $e) {
+            report($e);
+
+            return false;
+        }
     }
 }
