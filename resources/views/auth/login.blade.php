@@ -3,154 +3,271 @@
 @section('title', 'Sign In')
 
 @section('content')
-<div class="auth-wrapper min-vh-100 d-flex">
+    <div class="auth-wrapper d-flex min-vh-100">
 
-    {{-- Left branding panel (desktop) --}}
-    <div class="auth-brand d-none d-lg-flex flex-column justify-content-center align-items-center text-white p-5">
-        <div class="auth-brand-inner text-center fade-in">
-            <div class="mb-4">
-                <i class="bi bi-building display-1"></i>
-            </div>
-            <h1 class="h2 fw-bold mb-3">Applicant Registration System</h1>
-            <p class="lead opacity-75 mb-4 col-lg-10 mx-auto">
-                Secure online portal for applicant registration and administration.
-            </p>
-            <div class="d-flex justify-content-center gap-4 mt-4 opacity-75">
-                <div class="text-center">
-                    <i class="bi bi-shield-check fs-3 d-block mb-1"></i>
-                    <small>Secure</small>
-                </div>
-                <div class="text-center">
-                    <i class="bi bi-file-earmark-person fs-3 d-block mb-1"></i>
-                    <small>Registration</small>
-                </div>
-                <div class="text-center">
-                    <i class="bi bi-people fs-3 d-block mb-1"></i>
-                    <small>Management</small>
-                </div>
-            </div>
-        </div>
-    </div>
+        {{-- ===========================================================
+        Left Branding Panel (Desktop)
+    ============================================================ --}}
+        <div class="auth-brand d-none d-lg-flex flex-column justify-content-center align-items-center text-white p-5">
+            <div class="auth-brand-inner text-center fade-in">
 
-    {{-- Right login panel --}}
-    <div class="auth-form-panel d-flex flex-column justify-content-center align-items-center p-4 p-md-5 flex-grow-1">
-        <div class="auth-card-wrap w-100 fade-in" style="max-width: 420px;">
+                <img src="{{ asset('images/abuyog-logo.png') }}" alt="Municipality of Abuyog" class="mb-4"
+                    style="width:110px;height:110px;object-fit:contain;">
 
-            {{-- Mobile logo --}}
-            <div class="text-center mb-4 d-lg-none">
-                <i class="bi bi-building text-primary" style="font-size: 2.5rem;"></i>
-                <h2 class="h5 fw-bold mt-2 mb-0">Abuyog Community College</h2>
-            </div>
+                <h1 class="display-6 fw-bold mb-3">
+                    Applicant Registration System
+                </h1>
 
-            <div class="card border-0 shadow-sm rounded-4">
-                <div class="card-body p-4 p-md-5">
-                    <div class="text-center mb-4">
-                        <div class="d-none d-lg-block mb-3">
-                            <i class="bi bi-building text-primary" style="font-size: 2rem;"></i>
-                        </div>
-                        <h1 class="h4 fw-bold mb-1">Sign in to your account</h1>
-                        <p class="text-muted small mb-0">Enter your credentials below to continue.</p>
+                <p class="lead opacity-75 mb-5">
+                    Municipality of Abuyog, Leyte
+                </p>
+
+                <div class="row text-center g-4 mt-2">
+
+                    <div class="col">
+                        <i class="bi bi-shield-check fs-1 mb-2 d-block"></i>
+                        <div class="fw-semibold">Secure</div>
+                        <small class="opacity-75">
+                            Protected access
+                        </small>
                     </div>
 
-                    {{-- Flash status (e.g. after logout) --}}
-                    @if (session('status'))
-                        <div class="alert alert-success border-0 rounded-3 small mb-3" role="alert">
-                            <i class="bi bi-check-circle me-1"></i> {{ session('status') }}
-                        </div>
-                    @endif
+                    <div class="col">
+                        <i class="bi bi-person-vcard fs-1 mb-2 d-block"></i>
+                        <div class="fw-semibold">Applicants</div>
+                        <small class="opacity-75">
+                            Registration Portal
+                        </small>
+                    </div>
 
-                    <form id="login-form" novalidate>
-                        @csrf
+                    <div class="col">
+                        <i class="bi bi-gear fs-1 mb-2 d-block"></i>
+                        <div class="fw-semibold">Administration</div>
+                        <small class="opacity-75">
+                            System Management
+                        </small>
+                    </div>
 
-                        {{-- Email --}}
-                        <div class="mb-3">
-                            <label for="email" class="form-label fw-medium">Email Address</label>
-                            <div class="input-group">
-                                <span class="input-group-text bg-white border-end-0 rounded-start-3">
-                                    <i class="bi bi-envelope text-muted"></i>
-                                </span>
-                                <input type="email"
-                                       class="form-control border-start-0 rounded-end-3"
-                                       id="email"
-                                       name="email"
-                                       placeholder="name@example.com"
-                                       autocomplete="email"
-                                       autofocus
-                                       value="{{ old('email') }}">
-                            </div>
-                            <div class="invalid-feedback d-block" data-error="email"></div>
-                        </div>
-
-                        {{-- Password --}}
-                        <div class="mb-3">
-                            <label for="password" class="form-label fw-medium">Password</label>
-                            <div class="input-group">
-                                <span class="input-group-text bg-white border-end-0 rounded-start-3">
-                                    <i class="bi bi-lock text-muted"></i>
-                                </span>
-                                <input type="password"
-                                       class="form-control border-start-0 border-end-0"
-                                       id="password"
-                                       name="password"
-                                       placeholder="Enter your password"
-                                       autocomplete="current-password">
-                                <button type="button"
-                                        class="btn btn-outline-secondary border-start-0 rounded-end-3 toggle-password"
-                                        data-target="#password"
-                                        tabindex="-1"
-                                        aria-label="Show password">
-                                    <i class="bi bi-eye"></i>
-                                </button>
-                            </div>
-                            <div class="invalid-feedback d-block" data-error="password"></div>
-                        </div>
-
-                        {{-- Remember + Forgot --}}
-                        <div class="d-flex align-items-center justify-content-between mb-4">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="1" id="remember" name="remember">
-                                <label class="form-check-label small" for="remember">Remember Me</label>
-                            </div>
-                            <span class="small text-muted" title="Coming soon">
-                                Forgot password? <span class="text-decoration-underline">Coming Soon</span>
-                            </span>
-                        </div>
-
-                        {{-- Auth error (generic) --}}
-                        <div id="auth-error" class="alert alert-danger border-0 rounded-3 small d-none mb-3" role="alert">
-                            <i class="bi bi-exclamation-triangle me-1"></i>
-                            <span id="auth-error-text"></span>
-                        </div>
-
-                        {{-- Submit --}}
-                        <div class="d-grid">
-                            <button type="submit" id="btn-login" class="btn btn-primary btn-lg rounded-pill">
-                                <span class="btn-text">
-                                    <i class="bi bi-box-arrow-in-right me-2"></i> Sign In
-                                </span>
-                                <span class="btn-spinner d-none">
-                                    <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                                    Signing in…
-                                </span>
-                            </button>
-                        </div>
-                    </form>
                 </div>
+
+                <hr class="border-light opacity-25 my-5">
+
+                <small class="opacity-75">
+                    Secure Applicant Registration and Verification Platform
+                </small>
+
+            </div>
+        </div>
+
+        {{-- ===========================================================
+        Login Panel
+    ============================================================ --}}
+        <div class="auth-form-panel d-flex align-items-center justify-content-center flex-grow-1 p-4 p-lg-5">
+
+            <div class="auth-card-wrap w-100 fade-in" style="max-width:440px;">
+
+                {{-- Mobile Header --}}
+                <div class="text-center d-lg-none mb-4">
+
+                    <img src="{{ asset('images/abuyog-logo.png') }}" class="mb-3"
+                        style="width:72px;height:72px;object-fit:contain;" alt="Logo">
+
+                    <h2 class="h5 fw-bold mb-1">
+                        Applicant Registration
+                    </h2>
+
+                    <div class="text-muted small">
+                        Municipality of Abuyog
+                    </div>
+
+                </div>
+
+                <div class="card border-0 shadow rounded-4">
+
+                    <div class="card-body p-4 p-lg-5">
+
+                        <div class="text-center mb-4">
+
+                            <div class="d-none d-lg-block mb-3">
+                                <img src="{{ asset('images/abuyog-logo.png') }}" style="width:70px;height:70px;"
+                                    alt="Logo">
+                            </div>
+
+                            <h1 class="fw-bold h3 mb-2">
+                                Welcome Back
+                            </h1>
+
+                            <p class="text-muted mb-0">
+                                Sign in to continue to the administration panel.
+                            </p>
+
+                        </div>
+
+                        @if (session('status'))
+                            <div class="alert alert-success rounded-3 border-0">
+                                <i class="bi bi-check-circle-fill me-2"></i>
+                                {{ session('status') }}
+                            </div>
+                        @endif
+
+                        <form id="login-form" novalidate>
+
+                            @csrf
+
+                            {{-- Email --}}
+                            <div class="mb-3">
+
+                                <label class="form-label fw-semibold">
+                                    Email Address
+                                </label>
+
+                                <div class="input-group">
+
+                                    <span class="input-group-text bg-white">
+                                        <i class="bi bi-envelope"></i>
+                                    </span>
+
+                                    <input type="email" class="form-control" id="email" name="email"
+                                        autocomplete="username" autofocus placeholder="name@example.com">
+
+                                </div>
+
+                                <div class="invalid-feedback d-block" data-error="email"></div>
+
+                            </div>
+
+                            {{-- Password --}}
+                            <div class="mb-3">
+
+                                <label class="form-label fw-semibold">
+                                    Password
+                                </label>
+
+                                <div class="input-group">
+
+                                    <span class="input-group-text bg-white">
+                                        <i class="bi bi-lock"></i>
+                                    </span>
+
+                                    <input type="password" class="form-control border-start-0 border-end-0" id="password"
+                                        name="password" autocomplete="current-password" placeholder="Enter your password">
+
+                                    <button type="button" class="btn btn-outline-secondary toggle-password"
+                                        data-target="#password">
+
+                                        <i class="bi bi-eye"></i>
+
+                                    </button>
+
+                                </div>
+
+                                <div id="caps-lock-warning" class="small text-warning mt-2 d-none">
+                                    <i class="bi bi-exclamation-triangle me-1"></i>
+                                    Caps Lock is on.
+                                </div>
+
+                                <div class="invalid-feedback d-block" data-error="password"></div>
+
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+
+                                <div class="form-check">
+
+                                    <input class="form-check-input" id="remember" name="remember" type="checkbox">
+
+                                    <label class="form-check-label small" for="remember">
+
+                                        Remember Me
+
+                                    </label>
+
+                                </div>
+
+                                <small class="text-muted">
+                                    Forgot Password?
+                                </small>
+
+                            </div>
+
+                            <div id="auth-error" class="alert alert-danger rounded-3 border-0 d-none">
+
+                                <i class="bi bi-exclamation-circle me-2"></i>
+
+                                <span id="auth-error-text"></span>
+
+                            </div>
+
+                            <div class="d-grid">
+
+                                <button id="btn-login" class="btn btn-primary btn-lg rounded-pill">
+
+                                    <span class="btn-text">
+
+                                        <i class="bi bi-box-arrow-in-right me-2"></i>
+
+                                        Sign In
+
+                                    </span>
+
+                                    <span class="btn-spinner d-none">
+
+                                        <span class="spinner-border spinner-border-sm me-2"></span>
+
+                                        Signing in...
+
+                                    </span>
+
+                                </button>
+
+                            </div>
+
+                        </form>
+
+                        <hr class="my-4">
+
+                        <div class="text-center">
+
+                            <a href="{{ route('applicant.register') }}" class="text-decoration-none small">
+
+                                <i class="bi bi-arrow-left me-1"></i>
+
+                                Back to Applicant Registration
+
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="text-center mt-4 small text-muted">
+
+                    <div>
+                        &copy; {{ date('Y') }}
+                        Municipality of Abuyog, Leyte
+                    </div>
+
+                    <div class="mt-1">
+                        Applicant Registration System
+                    </div>
+
+                </div>
+
             </div>
 
-            <p class="text-center text-muted small mt-4 mb-0">
-                &copy; {{ date('Y') }} Abuyog Community College
-            </p>
         </div>
+
     </div>
-</div>
 @endsection
 
 @push('scripts')
-<script>
-    window.LoginRoutes = {
-        login: @json(route('login.submit')),
-    };
-</script>
-<script src="{{ asset('js/auth-login.js') }}"></script>
+    <script>
+        window.LoginRoutes = {
+            login: @json(route('login.submit')),
+        };
+    </script>
+
+    <script src="{{ asset('js/auth-login.js') }}"></script>
 @endpush
