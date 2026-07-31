@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Models\Applicant;
 use App\Models\EmailTemplate;
-use Illuminate\Support\Facades\Blade;
 
 class EmailTemplateRenderer
 {
