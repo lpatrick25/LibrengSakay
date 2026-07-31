@@ -322,9 +322,9 @@
 ========================================================== */
 
 .hero-card {
-    background:
-        linear-gradient(rgba(255, 248, 225, 0.96), rgba(255, 248, 225, 0.96)),
-        url("https://www.transparenttextures.com/patterns/honeycomb.png");
+    background-color: #25008a;
+    background-image: url("https://www.transparenttextures.com/patterns/light-honeycomb.png");
+    /* This is mostly intended for prototyping; please download the pattern and re-host for production environments. Thank you! */
 
     border: 1px solid #ffe082;
 }
