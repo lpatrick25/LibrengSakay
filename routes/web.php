@@ -5,6 +5,7 @@ use App\Http\Controllers\ApplicantRegistrationController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EmailTemplateController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\VerificationController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -35,6 +36,13 @@ Route::get('/applicant/register', [ApplicantRegistrationController::class, 'inde
 
 Route::post('/applicant/register', [ApplicantRegistrationController::class, 'store'])
     ->name('applicant.register.store');
+
+Route::get(
+    '/verification/{applicant}',
+    [VerificationController::class, 'show']
+)
+    ->middleware('signed')
+    ->name('verification.show');
 
 // ── Admin area (authenticated) ─────────────────────────────────────────
 Route::middleware('auth')->prefix('admin')->group(function () {

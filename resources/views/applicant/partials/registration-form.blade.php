@@ -169,9 +169,13 @@
 
                         Email Address
 
+                        <span class="text-danger">*</span>
+
                     </label>
 
                     <input type="email" class="form-control form-control-lg" name="email">
+
+                    <div class="invalid-feedback" data-error="email"></div>
 
                 </div>
 
@@ -471,7 +475,7 @@
 
                     Your personal information is collected solely for the purpose
                     of processing your application for the
-                    <strong>Libreng Sakay Program</strong>
+                    <strong>LIBRENG SAKAY ni Mayor Lemy</strong>
                     for eligible examinees taking the
                     Civil Service Commission Pen-and-Paper Test.
 

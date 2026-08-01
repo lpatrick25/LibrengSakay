@@ -217,7 +217,7 @@
                             <p class="text-white-50">
 
                                 Register online to avail transportation assistance under the
-                                <strong>Libreng Sakay Program.</strong>
+                                <strong>LIBRENG SAKAY ni Mayor Lemy.</strong>
 
                             </p>
 

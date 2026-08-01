@@ -21,7 +21,6 @@ return new class extends Migration
             $table->string('place_of_examination', 150);
             $table->string('email', 150)->nullable();
             $table->string('contact_number', 20);
-            $table->string('identification_path')->nullable();
             $table->boolean('consent_given')->default(false);
             $table->string('ip_address', 45)->nullable();
 
@@ -31,6 +30,9 @@ return new class extends Migration
             $table->string('verified_by', 100)->nullable();
             $table->timestamp('verified_at')->nullable();
             $table->text('remarks')->nullable();
+
+            $table->uuid('verification_uuid')->nullable()->unique();
+            $table->string('verification_hash', 64)->nullable()->index();
 
             $table->timestamps();
 

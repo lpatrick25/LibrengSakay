@@ -59,7 +59,7 @@ class ApplicantRegistrationRequest extends FormRequest
                 'max:150',
             ],
             'email' => [
-                'nullable',
+                'required',
                 'email:rfc,dns',
                 'max:150',
             ],

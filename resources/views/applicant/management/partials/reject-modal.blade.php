@@ -24,7 +24,7 @@
                         </h4>
 
                         <small class="opacity-75">
-                            Municipality of Abuyog • Libreng Sakay Program
+                            Municipality of Abuyog • LIBRENG SAKAY ni Mayor Lemy
                         </small>
 
                     </div>

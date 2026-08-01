@@ -5,12 +5,22 @@ namespace App\Http\Controllers;
 use App\Mail\TemplatedMail;
 use App\Models\Applicant;
 use App\Services\EmailTemplateRenderer;
+use Endroid\QrCode\Builder\Builder;
+use Endroid\QrCode\Encoding\Encoding;
+use Endroid\QrCode\ErrorCorrectionLevel;
+use Endroid\QrCode\Label\Font\OpenSans;
+use Endroid\QrCode\Label\LabelAlignment;
+use Endroid\QrCode\RoundBlockSizeMode;
+use Endroid\QrCode\Writer\PngWriter;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Str;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class ApplicantManagementController extends Controller
 {
@@ -166,9 +176,11 @@ class ApplicantManagementController extends Controller
     {
         $applicant = Applicant::findOrFail($id);
 
+        $identification = $applicant->getFirstMedia('identification');
+
         return response()->json([
             'success' => true,
-            'data'    => [
+            'data' => [
                 'id'                   => $applicant->id,
                 'full_name'            => $applicant->full_name,
                 'last_name'            => $applicant->last_name,
@@ -181,10 +193,31 @@ class ApplicantManagementController extends Controller
                 'place_of_examination' => $applicant->place_of_examination,
                 'contact_number'       => $applicant->contact_number,
                 'email'                => $applicant->email,
-                'identification_path'  => $applicant->identification_path,
-                'identification_url'   => $applicant->identification_url,
-                'is_image'             => $applicant->is_identification_image,
-                'is_pdf'               => $applicant->is_identification_pdf,
+                /*
+                |--------------------------------------------------------------------------
+                | Identification (Spatie Media Library)
+                |--------------------------------------------------------------------------
+                */
+                'identification' => [
+                    'exists'      => (bool) $identification,
+                    'id'          => $identification?->id,
+                    'name'        => $identification?->name,
+                    'file_name'   => $identification?->file_name,
+                    'mime_type'   => $identification?->mime_type,
+                    'size'        => $identification?->size,
+                    'human_size'  => $identification?->human_readable_size,
+                    'extension'   => $identification
+                        ? pathinfo($identification->file_name, PATHINFO_EXTENSION)
+                        : null,
+                    'url'         => $identification?->getUrl(),
+                    'download_url' => $identification?->getFullUrl(),
+                    'is_image'    => $identification
+                        ? str_starts_with($identification->mime_type, 'image/')
+                        : false,
+                    'is_pdf'      => $identification
+                        ? $identification->mime_type === 'application/pdf'
+                        : false,
+                ],
                 'id_status'            => $applicant->id_status,
                 'id_status_label'      => $applicant->id_status_label,
                 'id_status_badge'      => $applicant->id_status_badge,
@@ -207,16 +240,106 @@ class ApplicantManagementController extends Controller
     {
         $applicant = Applicant::findOrFail($id);
 
+        // Prevent duplicate verification
+        if ($applicant->verification_status === 'verified') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Applicant has already been verified.',
+            ], 422);
+        }
+
         $applicant->update([
             'verification_status' => 'verified',
-            'verified_by'         => $request->input('verified_by', 'Administrator'),
+            'verified_by'         => $request->input('verified_by', auth()->user()?->name ?? 'Administrator'),
             'verified_at'         => now(),
             'remarks'             => $request->input('remarks'),
         ]);
 
-        $emailSent = $this->sendApplicantNotification($applicant, 'applicant_approved');
+        /*
+        |--------------------------------------------------------------------------
+        | Generate Secure Signed Verification URL
+        |--------------------------------------------------------------------------
+        |
+        | The QR DOES NOT expose applicant information.
+        | It only contains a signed URL.
+        |
+        */
+
+        $verificationUrl = URL::temporarySignedRoute(
+            'verification.show',
+            now()->addYears(5),
+            [
+                'applicant' => $applicant->id,
+            ]
+        );
+
+        /*
+        |--------------------------------------------------------------------------
+        | Generate QR Code PNG
+        |--------------------------------------------------------------------------
+        */
+
+        // public\images\abuyog-logo.png
+
+        $builder = new Builder(
+            writer: new PngWriter(),
+            writerOptions: [],
+            validateResult: false,
+            data: $verificationUrl,
+            encoding: new Encoding('UTF-8'),
+            errorCorrectionLevel: ErrorCorrectionLevel::High,
+            size: 300,
+            margin: 20,
+            roundBlockSizeMode: RoundBlockSizeMode::Margin,
+            logoPath: public_path('images/abuyog-logo.png'),
+            logoResizeToWidth: 70,
+            logoPunchoutBackground: true,
+            labelText: 'Libreng Sakay ni Mayor Lemy',
+            labelFont: new OpenSans(12),
+            labelAlignment: LabelAlignment::Center
+        );
+
+        $qrCodeResult = $builder->build();
+
+        /*
+        |--------------------------------------------------------------------------
+        | Save QR using Spatie Media Library
+        |--------------------------------------------------------------------------
+        */
+
+        $tempFile = storage_path(
+            'app/temp/' . Str::uuid() . '.png'
+        );
+
+        if (! is_dir(dirname($tempFile))) {
+            mkdir(dirname($tempFile), 0755, true);
+        }
+
+        file_put_contents($tempFile, $qrCodeResult->getString());
+
+        // Remove old QR if existing
+        $applicant->clearMediaCollection('verification_qr');
+
+        $applicant
+            ->addMedia($tempFile)
+            ->usingFileName('verification-qr.png')
+            ->toMediaCollection('verification_qr');
+
+        @unlink($tempFile);
+
+        /*
+        |--------------------------------------------------------------------------
+        | Send Email
+        |--------------------------------------------------------------------------
+        */
+
+        $emailSent = $this->sendApplicantNotification(
+            $applicant,
+            'applicant_approved'
+        );
 
         $message = 'Applicant has been verified successfully.';
+
         if ($emailSent === true) {
             $message .= ' Notification email sent.';
         } elseif ($emailSent === false) {
@@ -269,10 +392,6 @@ class ApplicantManagementController extends Controller
     {
         $applicant = Applicant::findOrFail($id);
 
-        if ($applicant->identification_path && Storage::disk('public')->exists($applicant->identification_path)) {
-            Storage::disk('public')->delete($applicant->identification_path);
-        }
-
         $applicant->delete();
 
         return response()->json([
@@ -281,20 +400,27 @@ class ApplicantManagementController extends Controller
         ]);
     }
 
-    /**
-     * Download the uploaded identification file.
-     */
-    public function downloadId(int $id): StreamedResponse|\Illuminate\Http\RedirectResponse
+    public function downloadId(int $id): BinaryFileResponse
     {
         $applicant = Applicant::findOrFail($id);
 
-        if (!$applicant->identification_path || !Storage::disk('public')->exists($applicant->identification_path)) {
-            abort(404, 'Identification file not found.');
-        }
+        $media = $applicant->getFirstMedia('identification');
 
-        $filename = 'ID_' . $applicant->id . '_' . $applicant->last_name . '.' . pathinfo($applicant->identification_path, PATHINFO_EXTENSION);
+        abort_if(! $media, 404, 'Identification file not found.');
 
-        return Storage::disk('public')->download($applicant->identification_path, $filename);
+        $extension = pathinfo($media->file_name, PATHINFO_EXTENSION);
+
+        $filename = sprintf(
+            'ID_%06d_%s.%s',
+            $applicant->id,
+            str_replace(' ', '_', $applicant->last_name),
+            $extension
+        );
+
+        return response()->download(
+            $media->getPath(),
+            $filename
+        );
     }
 
     /**

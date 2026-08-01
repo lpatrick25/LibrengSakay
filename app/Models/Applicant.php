@@ -4,16 +4,17 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Storage;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class Applicant extends Model
+class Applicant extends Model implements HasMedia
 {
     use HasFactory;
+    use InteractsWithMedia;
 
     /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
+     * Mass assignable attributes.
      */
     protected $fillable = [
         'applicant_type',
@@ -24,7 +25,6 @@ class Applicant extends Model
         'place_of_examination',
         'email',
         'contact_number',
-        'identification_path',
         'consent_given',
         'ip_address',
         'verification_status',
@@ -32,36 +32,81 @@ class Applicant extends Model
         'verified_by',
         'verified_at',
         'remarks',
+        'verification_uuid',
+        'verification_hash',
     ];
 
     /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
+     * Attribute casting.
      */
     protected $casts = [
         'consent_given' => 'boolean',
         'verified_at'   => 'datetime',
     ];
 
-    /**
-     * Get the full name of the applicant.
-     */
+    /*
+    |--------------------------------------------------------------------------
+    | Media Collections
+    |--------------------------------------------------------------------------
+    */
+
+    public function registerMediaCollections(): void
+    {
+        // Applicant uploaded ID
+        $this
+            ->addMediaCollection('identification')
+            ->singleFile();
+
+        // Generated QR Code
+        $this
+            ->addMediaCollection('verification_qr')
+            ->singleFile();
+
+        // Future use
+        $this
+            ->addMediaCollection('attachments');
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Media Conversions
+    |--------------------------------------------------------------------------
+    */
+
+    public function registerMediaConversions(?Media $media = null): void
+    {
+        $this
+            ->addMediaConversion('thumb')
+            ->width(250)
+            ->height(250)
+            ->sharpen(10)
+            ->performOnCollections(
+                'identification',
+                'verification_qr'
+            );
+
+        $this
+            ->addMediaConversion('preview')
+            ->width(1000)
+            ->performOnCollections('identification');
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Accessors
+    |--------------------------------------------------------------------------
+    */
+
     public function getFullNameAttribute(): string
     {
-        $parts = array_filter([
-            $this->last_name . ',',
+        return trim(implode(' ', array_filter([
+            "{$this->last_name},",
             $this->first_name,
             $this->middle_name,
             $this->suffix,
-        ]);
-
-        return implode(' ', $parts);
+        ])));
     }
 
-    /**
-     * Human-readable applicant type label.
-     */
     public function getApplicantTypeLabelAttribute(): string
     {
         return match ($this->applicant_type) {
@@ -72,35 +117,16 @@ class Applicant extends Model
         };
     }
 
-    /**
-     * Bootstrap badge class for applicant type.
-     */
     public function getApplicantTypeBadgeAttribute(): string
     {
         return match ($this->applicant_type) {
             'abuyognon'     => 'primary',
             'acc_student'   => 'success',
             'non_abuyognon' => 'secondary',
-            default         => 'light',
+            default         => 'secondary',
         };
     }
 
-    /**
-     * Bootstrap badge class for verification status.
-     */
-    public function getVerificationStatusBadgeAttribute(): string
-    {
-        return match ($this->verification_status) {
-            'pending'  => 'warning',
-            'verified' => 'success',
-            'rejected' => 'danger',
-            default    => 'secondary',
-        };
-    }
-
-    /**
-     * Human-readable verification status.
-     */
     public function getVerificationStatusLabelAttribute(): string
     {
         return match ($this->verification_status) {
@@ -111,22 +137,16 @@ class Applicant extends Model
         };
     }
 
-    /**
-     * Bootstrap badge class for ID status.
-     */
-    public function getIdStatusBadgeAttribute(): string
+    public function getVerificationStatusBadgeAttribute(): string
     {
-        return match ($this->id_status) {
-            'uploaded'     => 'success',
-            'missing'      => 'danger',
-            'needs_review' => 'warning',
-            default        => 'secondary',
+        return match ($this->verification_status) {
+            'pending'  => 'warning',
+            'verified' => 'success',
+            'rejected' => 'danger',
+            default    => 'secondary',
         };
     }
 
-    /**
-     * Human-readable ID status.
-     */
     public function getIdStatusLabelAttribute(): string
     {
         return match ($this->id_status) {
@@ -137,41 +157,83 @@ class Applicant extends Model
         };
     }
 
-    /**
-     * Public URL for the uploaded identification file.
-     */
+    public function getIdStatusBadgeAttribute(): string
+    {
+        return match ($this->id_status) {
+            'uploaded'     => 'success',
+            'missing'      => 'danger',
+            'needs_review' => 'warning',
+            default        => 'secondary',
+        };
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Identification
+    |--------------------------------------------------------------------------
+    */
+
+    public function getIdentificationMediaAttribute(): ?Media
+    {
+        return $this->getFirstMedia('identification');
+    }
+
     public function getIdentificationUrlAttribute(): ?string
     {
-        if (!$this->identification_path) {
-            return null;
-        }
-
-        return Storage::disk('public')->url($this->identification_path);
+        return $this->identification_media?->getUrl();
     }
 
-    /**
-     * Whether the ID file is an image.
-     */
+    public function getIdentificationPreviewUrlAttribute(): ?string
+    {
+        return $this->identification_media?->getUrl('preview');
+    }
+
+    public function getIdentificationThumbUrlAttribute(): ?string
+    {
+        return $this->identification_media?->getUrl('thumb');
+    }
+
+    public function getIdentificationMimeTypeAttribute(): ?string
+    {
+        return $this->identification_media?->mime_type;
+    }
+
+    public function getIdentificationExtensionAttribute(): ?string
+    {
+        return $this->identification_media?->extension;
+    }
+
     public function getIsIdentificationImageAttribute(): bool
     {
-        if (!$this->identification_path) {
-            return false;
-        }
-
-        $ext = strtolower(pathinfo($this->identification_path, PATHINFO_EXTENSION));
-
-        return in_array($ext, ['jpg', 'jpeg', 'png'], true);
+        return str_starts_with(
+            $this->identification_media?->mime_type ?? '',
+            'image/'
+        );
     }
 
-    /**
-     * Whether the ID file is a PDF.
-     */
     public function getIsIdentificationPdfAttribute(): bool
     {
-        if (!$this->identification_path) {
-            return false;
-        }
+        return $this->identification_media?->mime_type === 'application/pdf';
+    }
 
-        return strtolower(pathinfo($this->identification_path, PATHINFO_EXTENSION)) === 'pdf';
+    /*
+    |--------------------------------------------------------------------------
+    | Verification QR
+    |--------------------------------------------------------------------------
+    */
+
+    public function getVerificationQrMediaAttribute(): ?Media
+    {
+        return $this->getFirstMedia('verification_qr');
+    }
+
+    public function getVerificationQrUrlAttribute(): ?string
+    {
+        return $this->verification_qr_media?->getUrl();
+    }
+
+    public function getVerificationQrThumbUrlAttribute(): ?string
+    {
+        return $this->verification_qr_media?->getUrl('thumb');
     }
 }

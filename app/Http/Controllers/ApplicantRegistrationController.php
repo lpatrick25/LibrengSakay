@@ -3,16 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ApplicantRegistrationRequest;
+use App\Mail\ApplicationReceivedMail;
 use App\Models\Applicant;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\View\View;
 
 class ApplicantRegistrationController extends Controller
 {
     /**
-     * Display the applicant registration page (category selection + form).
+     * Display the applicant registration page.
      */
     public function index(): View
     {
@@ -20,50 +20,76 @@ class ApplicantRegistrationController extends Controller
     }
 
     /**
-     * Handle the AJAX registration form submission.
+     * Store a new applicant.
      */
     public function store(ApplicantRegistrationRequest $request): JsonResponse
     {
         try {
             $validated = $request->validated();
 
-            // Handle identification file upload
-            $idPath = null;
+            /*
+            |--------------------------------------------------------------------------
+            | Create Applicant
+            |--------------------------------------------------------------------------
+            */
+
+            $applicant = Applicant::create([
+                'applicant_type'        => $validated['applicant_type'],
+                'last_name'             => $validated['last_name'],
+                'first_name'            => $validated['first_name'],
+                'middle_name'           => $validated['middle_name'] ?? null,
+                'suffix'                => $validated['suffix'] ?? null,
+                'place_of_examination'  => $validated['place_of_examination'],
+                'email'                 => $validated['email'] ?? null,
+                'contact_number'        => $validated['contact_number'],
+
+                'consent_given'         => true,
+                'verification_status'   => 'pending',
+                'id_status'             => $request->hasFile('identification')
+                    ? 'uploaded'
+                    : 'missing',
+                'ip_address'            => $request->ip(),
+            ]);
+
+            /*
+            |--------------------------------------------------------------------------
+            | Upload Identification using Spatie Media Library
+            |--------------------------------------------------------------------------
+            */
+
             if ($request->hasFile('identification')) {
-                $file = $request->file('identification');
-                $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-                $idPath = $file->storeAs('ids', $filename, 'public');
+
+                $applicant
+                    ->addMediaFromRequest('identification')
+                    ->usingName('Identification')
+                    ->usingFileName(
+                        now()->format('YmdHis') .
+                            '_' .
+                            uniqid() .
+                            '.' .
+                            $request->file('identification')->getClientOriginalExtension()
+                    )
+                    ->toMediaCollection('identification');
             }
 
-            // Persist applicant record
-            $applicant = Applicant::create([
-                'applicant_type'   => $validated['applicant_type'],
-                'last_name'        => $validated['last_name'],
-                'first_name'       => $validated['first_name'],
-                'middle_name'      => $validated['middle_name'] ?? null,
-                'suffix'           => $validated['suffix'] ?? null,
-                'place_of_examination' => $validated['place_of_examination'],
-                'email'            => $validated['email'] ?? null,
-                'contact_number'   => $validated['contact_number'],
-                'identification_path' => $idPath,
-                'consent_given'    => true,
-                'verification_status' => 'pending',
-                'id_status'        => $idPath ? 'uploaded' : 'missing',
-                'ip_address'       => $request->ip(),
-            ]);
+            if ($applicant->email) {
+                try {
+                    Mail::to($applicant->email)
+                        ->queue(new ApplicationReceivedMail($applicant));
+                } catch (\Throwable $e) {
+                    report($e);
+                }
+            }
 
             return response()->json([
                 'success' => true,
-                'message' => 'Application submitted successfully. Your reference number is #' . str_pad($applicant->id, 6, '0', STR_PAD_LEFT) . '.',
-                'data'    => [
+                'message' => 'Application submitted successfully. Your reference number is #' .
+                    str_pad($applicant->id, 6, '0', STR_PAD_LEFT) . '.',
+                'data' => [
                     'id' => $applicant->id,
                 ],
             ]);
         } catch (\Throwable $e) {
-            // Clean up uploaded file on failure
-            if (isset($idPath) && Storage::disk('public')->exists($idPath)) {
-                Storage::disk('public')->delete($idPath);
-            }
 
             report($e);
 
