@@ -321,45 +321,6 @@
             });
     }
 
-    // function populateViewModal(d) {
-    //     $('#vm-full-name').text(d.full_name);
-    //     $('#vm-category').html('<span class="badge text-bg-' + d.applicant_type_badge + ' rounded-pill">' + escapeHtml(d.applicant_type_label) + '</span>');
-    //     $('#vm-place').text(d.place_of_examination || '—');
-    //     $('#vm-contact').text(d.contact_number || '—');
-    //     $('#vm-email').text(d.email || '—');
-    //     $('#vm-submitted').text(d.created_at || '—');
-
-    //     // ID preview
-    //     const $preview = $('#vm-id-preview').empty();
-    //     const $dl = $('#vm-download-id').addClass('d-none');
-
-    //     if (d.identification_url) {
-    //         if (d.is_image) {
-    //             $preview.html('<img src="' + d.identification_url + '" class="img-fluid rounded-3 border" style="max-height:240px;" alt="ID">');
-    //         } else if (d.is_pdf) {
-    //             $preview.html(
-    //                 '<div class="border rounded-3 p-4 text-center bg-light">' +
-    //                 '<i class="bi bi-file-earmark-pdf-fill text-danger" style="font-size:3rem;"></i>' +
-    //                 '<p class="mb-0 mt-2 small text-muted">PDF Document</p></div>'
-    //             );
-    //         }
-    //         $dl.attr('href', window.ApplicantRoutes.downloadId + '/' + d.id + '/download-id').removeClass('d-none');
-    //     } else {
-    //         $preview.html('<p class="text-muted small mb-0">No identification uploaded.</p>');
-    //     }
-
-    //     $('#vm-id-status').html('<span class="badge text-bg-' + d.id_status_badge + ' rounded-pill">' + escapeHtml(d.id_status_label) + '</span>');
-
-    //     // Verification
-    //     $('#vm-status').html('<span class="badge text-bg-' + d.verification_badge + ' rounded-pill">' + escapeHtml(d.verification_label) + '</span>');
-    //     $('#vm-verified-by').text(d.verified_by || '—');
-    //     $('#vm-verified-at').text(d.verified_at || '—');
-    //     $('#vm-remarks').text(d.remarks || 'No remarks.');
-
-    //     // Toggle action buttons
-    //     $('#vm-btn-verify').prop('disabled', d.verification_status === 'verified');
-    //     $('#vm-btn-reject').prop('disabled', d.verification_status === 'rejected');
-    // }
     function populateViewModal(d) {
         $("#vm-full-name").text(d.full_name);
 
@@ -377,10 +338,10 @@
         $("#vm-submitted").text(d.created_at || "—");
 
         /*
-    |--------------------------------------------------------------------------
-    | Identification Preview (Spatie Media Library)
-    |--------------------------------------------------------------------------
-    */
+        |--------------------------------------------------------------------------
+        | Identification Preview (Spatie Media Library)
+        |--------------------------------------------------------------------------
+        */
 
         const $preview = $("#vm-id-preview").empty();
         const $download = $("#vm-download-id").addClass("d-none");
@@ -388,19 +349,26 @@
         if (d.identification && d.identification.exists) {
             if (d.identification.is_image) {
                 $preview.html(`
-                <img
-                    src="${d.identification.url}"
-                    class="img-fluid rounded-3 border shadow-sm"
-                    style="max-height:260px;"
-                    alt="Identification">
-            `);
+                    <a
+                        data-fslightbox="identification"
+                        href="${d.identification.url}">
+                        <img
+                            src="${d.identification.url}"
+                            class="img-fluid rounded-3 border shadow-sm"
+                            style="max-height:260px;cursor:zoom-in;"
+                            alt="Identification">
+                    </a>
+                `);
+
+                refreshFsLightbox();
             } else if (d.identification.is_pdf) {
                 $preview.html(`
-                <div class="border rounded-3 p-5 text-center bg-light">
-                    <i class="bi bi-file-earmark-pdf-fill text-danger display-4"></i>
-                    <h6 class="mt-3 mb-1">PDF Document</h6>
-                    <small class="text-muted">${escapeHtml(d.identification.file_name)}</small>
-                </div>
+                <iframe
+                    src="${d.identification.url}"
+                    width="100%"
+                    height="600"
+                    style="border:none;">
+                </iframe>
             `);
             } else {
                 $preview.html(`
@@ -431,10 +399,10 @@
         }
 
         /*
-    |--------------------------------------------------------------------------
-    | Status
-    |--------------------------------------------------------------------------
-    */
+        |--------------------------------------------------------------------------
+        | Status
+        |--------------------------------------------------------------------------
+        */
 
         $("#vm-id-status").html(
             '<span class="badge text-bg-' +
@@ -457,10 +425,10 @@
         $("#vm-remarks").text(d.remarks || "No remarks.");
 
         /*
-    |--------------------------------------------------------------------------
-    | Action Buttons
-    |--------------------------------------------------------------------------
-    */
+        |--------------------------------------------------------------------------
+        | Action Buttons
+        |--------------------------------------------------------------------------
+        */
 
         $("#vm-btn-verify").prop(
             "disabled",
@@ -501,32 +469,64 @@
             confirmButtonColor: "#198754",
             confirmButtonText: "Yes, verify",
             cancelButtonText: "Cancel",
-            customClass: { popup: "rounded-4" },
+            customClass: {
+                popup: "rounded-4",
+            },
         }).then(function (result) {
             if (!result.isConfirmed) return;
+
+            // Show loading dialog
+            Swal.fire({
+                title: "Verifying Applicant",
+                html: `
+                <div class="mt-2">
+                    <div class="spinner-border text-warning mb-3" role="status"></div>
+                    <div>Please wait while we verify the applicant and send the notification email...</div>
+                </div>
+            `,
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                showConfirmButton: false,
+                customClass: {
+                    popup: "rounded-4",
+                },
+                didOpen: () => {
+                    Swal.showLoading();
+                },
+            });
 
             $.ajax({
                 url: window.ApplicantRoutes.verify + "/" + id + "/verify",
                 method: "POST",
-                data: { verified_by: "Administrator" },
+                data: {
+                    verified_by: "Administrator",
+                },
                 success: function (res) {
                     Swal.fire({
                         icon: "success",
-                        title: "Verified",
+                        title: "Applicant Verified",
                         text: res.message,
-                        customClass: { popup: "rounded-4" },
+                        confirmButtonColor: "#198754",
+                        customClass: {
+                            popup: "rounded-4",
+                        },
                     });
+
                     refreshTable();
                     loadStatistics();
                 },
                 error: function (xhr) {
                     const msg =
                         xhr.responseJSON?.message || "Verification failed.";
+
                     Swal.fire({
                         icon: "error",
-                        title: "Error",
+                        title: "Verification Failed",
                         text: msg,
-                        customClass: { popup: "rounded-4" },
+                        confirmButtonColor: "#dc3545",
+                        customClass: {
+                            popup: "rounded-4",
+                        },
                     });
                 },
             });

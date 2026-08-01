@@ -341,6 +341,7 @@
         src="https://cdn.jsdelivr.net/npm/bootstrap-table@1.22.6/dist/extensions/sticky-header/bootstrap-table-sticky-header.min.js">
     </script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fslightbox/index.js"></script>
 
     <script src="{{ asset('js/applicant-registration.js') }}"></script>
 
