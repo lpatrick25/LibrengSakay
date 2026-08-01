@@ -15,9 +15,7 @@ use Endroid\QrCode\Writer\PngWriter;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
-use Symfony\Component\HttpFoundation\StreamedResponse;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -428,27 +426,42 @@ class ApplicantManagementController extends Controller
      *
      * @return bool|null  true = sent, false = failed, null = skipped (no email / inactive template)
      */
-    protected function sendApplicantNotification(Applicant $applicant, string $templateSlug): ?bool
-    {
+    protected function sendApplicantNotification(
+        Applicant $applicant,
+        string $templateSlug
+    ): ?bool {
+
         if (empty($applicant->email)) {
             return null;
         }
 
         $renderer = app(EmailTemplateRenderer::class);
-        $rendered = $renderer->renderForApplicant($templateSlug, $applicant);
+
+        $rendered = $renderer->renderForApplicant(
+            $templateSlug,
+            $applicant
+        );
 
         if ($rendered === null) {
-            // Template missing or inactive
             return null;
         }
 
+        $qrCode = $applicant->getFirstMedia('verification_qr');
+
         try {
-            Mail::to($applicant->email)->send(
-                new TemplatedMail($rendered['subject'], $rendered['body'])
-            );
+
+            Mail::to($applicant->email)
+                ->send(
+                    new TemplatedMail(
+                        $rendered['subject'],
+                        $rendered['body'],
+                        $qrCode
+                    )
+                );
 
             return true;
         } catch (\Throwable $e) {
+
             report($e);
 
             return false;

@@ -9,11 +9,9 @@
 
 <body
     style="margin:0;padding:0;background:#f4f6f9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#212529;">
-
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f4f6f9;padding:32px 16px;">
         <tr>
             <td align="center">
-
                 <table role="presentation"
                     style="
                     width:100%;

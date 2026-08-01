@@ -388,14 +388,10 @@
         <div class="modal-content border-0 rounded-4 shadow-lg">
 
             {{-- Header --}}
-            <div class="modal-header bg-warning-subtle border-0">
-
-                <h4 class="modal-title fw-bold" id="privacyModalLabel">
-
-                    <i class="bi bi-shield-lock-fill text-warning me-2"></i>
-
+            <div class="modal-header border-0 app-modal-header">
+                <h4 class="modal-title fw-bold text-white" id="privacyModalLabel">
+                    <i class="bi bi-shield-lock-fill text-white me-2"></i>
                     Data Privacy Notice
-
                 </h4>
 
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">

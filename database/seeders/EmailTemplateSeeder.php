@@ -37,81 +37,92 @@ class EmailTemplateSeeder extends Seeder
     private function approvedBody(): string
     {
         return <<<'HTML'
-            <p>Dear <strong>{{ applicant_name }}</strong>,</p>
+        <p>Dear <strong>{{ applicant_name }}</strong>,</p>
 
-            <p>
-                Greetings from <strong>{{ system_name }}</strong>.
+        <p>
+            Greetings from <strong>{{ system_name }}</strong>.
+        </p>
+
+        <p>
+            We are pleased to inform you that your application has been
+            <strong style="color:#198754;">APPROVED</strong>.
+        </p>
+
+        <div style="background:#f8f9fa;border-left:4px solid #198754;padding:16px 18px;margin:24px 0;border-radius:6px;">
+            <h3 style="margin:0 0 12px;font-size:16px;color:#198754;">
+                Application Details
+            </h3>
+
+            <table role="presentation" cellpadding="4" cellspacing="0" width="100%" style="font-size:14px;">
+                <tr>
+                    <td width="180"><strong>Applicant</strong></td>
+                    <td>{{ applicant_name }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Category</strong></td>
+                    <td>{{ applicant_category }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Place of Examination</strong></td>
+                    <td>{{ place_of_examination }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Date Submitted</strong></td>
+                    <td>{{ application_date }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Status</strong></td>
+                    <td style="color:#198754;font-weight:bold;">
+                        {{ verification_status }}
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div style="background:#eef6ff;border:1px solid #cfe2ff;border-radius:8px;padding:16px 18px;margin:24px 0;">
+            <h3 style="margin:0 0 12px;font-size:16px;color:#0d6efd;">
+                Verification QR Code
+            </h3>
+
+            <p style="margin:0 0 12px;">
+                Your personal <strong>Verification QR Code</strong> has been attached to this email as
+                <strong>Verification-QRCode.png</strong>.
             </p>
 
-            <p>
-                We are pleased to inform you that your application has been
-                <strong style="color:#198754;">APPROVED</strong>.
+            <p style="margin:0;">
+                Please download and keep the attached QR Code. You will be required to present it together with a valid
+                government-issued identification card during applicant verification or on your scheduled examination day.
             </p>
+        </div>
 
-            <div style="background:#f8f9fa;border-left:4px solid #198754;padding:16px 18px;margin:24px 0;border-radius:6px;">
-                <h3 style="margin:0 0 12px;font-size:16px;color:#198754;">
-                    Application Details
-                </h3>
+        <div style="background:#fff8e1;border:1px solid #ffe082;border-radius:8px;padding:14px;margin-top:20px;">
+            <strong>Important Reminders</strong>
 
-                <table role="presentation" cellpadding="4" cellspacing="0" width="100%" style="font-size:14px;">
-                    <tr>
-                        <td width="180"><strong>Applicant</strong></td>
-                        <td>{{ applicant_name }}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Category</strong></td>
-                        <td>{{ applicant_category }}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Place of Examination</strong></td>
-                        <td>{{ place_of_examination }}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Date Submitted</strong></td>
-                        <td>{{ application_date }}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Status</strong></td>
-                        <td style="color:#198754;font-weight:bold;">
-                            {{ verification_status }}
-                        </td>
-                    </tr>
-                </table>
-            </div>
+            <ul style="margin:10px 0 0 18px;padding:0;">
+                <li>Keep this email for future reference.</li>
+                <li>Save the attached <strong>Verification-QRCode.png</strong> in a safe place.</li>
+                <li>Present the attached QR Code together with a valid government-issued identification card during verification.</li>
+                <li>Do not share your QR Code with other applicants.</li>
+                <li>If you lose the attached QR Code, please contact the system administrator before your examination schedule.</li>
+            </ul>
+        </div>
 
-            <p>
-                Please present the QR Code below during verification or upon request by the examination personnel.
-                This QR Code is unique to your application and will be used to validate your approved registration.
-            </p>
+        <p style="margin-top:24px;">
+            Congratulations! We look forward to welcoming you on your scheduled examination. We wish you the very best in your upcoming Civil Service Examination.
+        </p>
 
-            {{ verification_qr }}
+        <p>
+            Respectfully,<br>
+            <strong>{{ system_name }}</strong>
+        </p>
 
-            <div style="background:#fff8e1;border:1px solid #ffe082;border-radius:8px;padding:14px;margin-top:20px;">
-                <strong>Important Reminders</strong>
-                <ul style="margin:10px 0 0 18px;padding:0;">
-                    <li>Keep this email for your records.</li>
-                    <li>Do not share your QR Code with other applicants.</li>
-                    <li>Present the QR Code together with a valid identification card during verification.</li>
-                    <li>If your QR Code cannot be scanned, contact the administrator immediately.</li>
-                </ul>
-            </div>
+        <hr style="border:none;border-top:1px solid #e9ecef;margin:28px 0;">
 
-            <p style="margin-top:24px;">
-                Congratulations! We look forward to seeing you on your scheduled examination.
-            </p>
-
-            <p>
-                Respectfully,<br>
-                <strong>{{ system_name }}</strong>
-            </p>
-
-            <hr style="border:none;border-top:1px solid #e9ecef;margin:28px 0;">
-
-            <p style="font-size:12px;color:#6c757d;text-align:center;">
-                This is an automated email generated by <strong>{{ system_name }}</strong>.<br>
-                Please do not reply directly to this message.
-            </p>
-            HTML;
+        <p style="font-size:12px;color:#6c757d;text-align:center;">
+            This is an automated email generated by <strong>{{ system_name }}</strong>.<br>
+            Please do not reply directly to this message.
+        </p>
+        HTML;
     }
 
     private function rejectedBody(): string

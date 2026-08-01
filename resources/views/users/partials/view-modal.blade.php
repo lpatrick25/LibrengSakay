@@ -5,7 +5,7 @@
         <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
 
             {{-- Header --}}
-            <div class="modal-header applicant-section text-white border-0 py-4">
+            <div class="modal-header applicant-section text-white border-0 py-4 app-modal-header">
 
                 <div class="d-flex align-items-center">
 
@@ -15,13 +15,13 @@
 
                     <div>
 
-                        <h4 class="modal-title fw-bold mb-1" id="viewUserModalLabel">
+                        <h4 class="modal-title fw-bold mb-1 text-white" id="viewUserModalLabel">
 
                             User Details
 
                         </h4>
 
-                        <small class="opacity-75">
+                        <small class="opacity-75 text-white">
                             Human Resource Management Office
                         </small>
 

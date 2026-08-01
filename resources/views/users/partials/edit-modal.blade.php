@@ -4,7 +4,7 @@
         <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
 
             {{-- Header --}}
-            <div class="modal-header applicant-section border-0 text-white py-4">
+            <div class="modal-header applicant-section border-0 text-white py-4 app-modal-header">
 
                 <div class="d-flex align-items-center">
                     <div class="hero-icon me-3">
@@ -12,11 +12,11 @@
                     </div>
 
                     <div>
-                        <h4 class="modal-title fw-bold mb-1" id="editUserModalLabel">
+                        <h4 class="modal-title fw-bold mb-1 text-white" id="editUserModalLabel">
                             Edit User
                         </h4>
 
-                        <small class="opacity-75">
+                        <small class="opacity-75 text-white">
                             Update account information and security settings
                         </small>
                     </div>

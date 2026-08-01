@@ -5,17 +5,17 @@
         <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
 
             {{-- Honey Header --}}
-            <div class="modal-header border-0 applicant-section text-white py-4">
+            <div class="modal-header border-0 applicant-section text-white py-4 app-modal-header">
                 <div class="d-flex align-items-center">
                     <div class="hero-icon me-3">
                         <i class="bi bi-person-plus-fill fs-3"></i>
                     </div>
 
                     <div>
-                        <h4 class="modal-title fw-bold mb-1" id="createUserModalLabel">
+                        <h4 class="modal-title fw-bold mb-1 text-white" id="createUserModalLabel">
                             Create New User
                         </h4>
-                        <small class="opacity-75">
+                        <small class="opacity-75 text-white">
                             Municipality of Abuyog • Human Resource Management Office
                         </small>
                     </div>
