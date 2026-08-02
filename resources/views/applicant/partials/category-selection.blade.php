@@ -29,7 +29,7 @@
             Welcome to the official registration portal for applicants
             who wish to avail of the
 
-            <strong>LIBRENG SAKAY ni Mayor Lemy</strong>
+            <strong>Libreng Sakay Online Registration</strong>
 
             of the Municipality of Abuyog.
 
@@ -95,7 +95,7 @@
                 <p class="text-muted">
 
                     Residents of the Municipality of Abuyog who are
-                    applying for the LIBRENG SAKAY ni Mayor Lemy.
+                    applying for the Libreng Sakay Online Registration.
 
                 </p>
 

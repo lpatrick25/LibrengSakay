@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Mail\TemplatedMail;
 use App\Models\Applicant;
+use App\Models\SmsRequest;
 use App\Services\EmailTemplateRenderer;
 use Endroid\QrCode\Builder\Builder;
 use Endroid\QrCode\Encoding\Encoding;
@@ -325,6 +326,14 @@ class ApplicantManagementController extends Controller
 
         @unlink($tempFile);
 
+        $message = "Congratulations! Your Libreng Sakay application has been APPROVED. Check your email for your Verification QR Code. Please monitor your email and SMS for your assigned pickup point and departure time. Follow the advised schedule to ensure timely arrival at your examination venue.";
+
+        SmsRequest::create([
+            'phone_number' => $applicant->contact_number,
+            'message'      => $message,
+            'status'       => 'pending',
+        ]);
+
         /*
         |--------------------------------------------------------------------------
         | Send Email
@@ -367,6 +376,15 @@ class ApplicantManagementController extends Controller
             'verified_at'         => now(),
             'remarks'             => $request->input('remarks'),
         ]);
+
+        $message = "Your Libreng Sakay application was not approved. Please check your email for the application remarks. Thank you.";
+
+        SmsRequest::create([
+            'phone_number' => $applicant->contact_number,
+            'message'      => $message,
+            'status'       => 'pending',
+        ]);
+
 
         $emailSent = $this->sendApplicantNotification($applicant, 'applicant_rejected');
 

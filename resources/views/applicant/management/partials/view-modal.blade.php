@@ -14,7 +14,7 @@
                             Applicant Details
                         </h4>
                         <div class="small opacity-75">
-                            Municipality of Abuyog • LIBRENG SAKAY ni Mayor Lemy
+                            Municipality of Abuyog • Libreng Sakay Online Registration
                         </div>
                     </div>
                 </div>

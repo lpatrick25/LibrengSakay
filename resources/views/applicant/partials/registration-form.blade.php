@@ -471,7 +471,7 @@
 
                     Your personal information is collected solely for the purpose
                     of processing your application for the
-                    <strong>LIBRENG SAKAY ni Mayor Lemy</strong>
+                    <strong>Libreng Sakay Online Registration</strong>
                     for eligible examinees taking the
                     Civil Service Commission Pen-and-Paper Test.
 

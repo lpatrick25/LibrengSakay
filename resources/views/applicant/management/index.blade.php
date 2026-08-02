@@ -23,7 +23,7 @@
                     <div>
 
                         <small class="text-uppercase fw-semibold text-warning d-block mb-1">
-                            Municipality of Abuyog • LIBRENG SAKAY ni Mayor Lemy
+                            Municipality of Abuyog • Libreng Sakay Online Registration
                         </small>
 
                         <h1 class="h3 fw-bold mb-2">
@@ -306,7 +306,7 @@
 
                     <small class="text-muted">
                         List of applicants registered for the
-                        <strong>LIBRENG SAKAY ni Mayor Lemy</strong>.
+                        <strong>Libreng Sakay Online Registration</strong>.
                     </small>
                 </div>
 
