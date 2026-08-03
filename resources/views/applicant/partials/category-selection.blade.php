@@ -178,7 +178,7 @@
     </div>
 
     {{-- Non-Abuyognon --}}
-    <div class="col-lg-4">
+    {{-- <div class="col-lg-4">
 
         <div class="card category-card h-100" data-value="non_abuyognon" tabindex="0">
 
@@ -230,7 +230,7 @@
 
         </div>
 
-    </div>
+    </div> --}}
 
 </div>
 
