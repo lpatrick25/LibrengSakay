@@ -61,7 +61,11 @@
                                         <small class="text-muted">Email Address</small>
                                         <div class="fw-semibold" id="vm-email">—</div>
                                     </div>
-                                    <div class="col-12">
+                                    <div class="col-md-6">
+                                        <small class="text-muted">Date of Birth</small>
+                                        <div class="fw-semibold" id="vm-date-of-birth">—</div>
+                                    </div>
+                                    <div class="col-md-6">
                                         <small class="text-muted">Place of Examination</small>
                                         <div class="fw-semibold" id="vm-place">—</div>
                                     </div>

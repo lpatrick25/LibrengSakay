@@ -25,6 +25,7 @@ class Applicant extends Model implements HasMedia
         'place_of_examination',
         'email',
         'contact_number',
+        'date_of_birth',
         'consent_given',
         'ip_address',
         'verification_status',

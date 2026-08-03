@@ -179,6 +179,21 @@
 
                 </div>
 
+                {{-- Date of Birth --}}
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">
+
+                        Date of Birth
+
+                        <span class="text-danger">*</span>
+
+                    </label>
+
+                    <input type="date" class="form-control form-control-lg" name="date_of_birth">
+
+                    <div class="invalid-feedback" data-error="date_of_birth"></div>
+                </div>
+
             </div>
 
         </div>

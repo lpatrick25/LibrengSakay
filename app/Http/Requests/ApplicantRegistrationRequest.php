@@ -69,6 +69,11 @@ class ApplicantRegistrationRequest extends FormRequest
                 'max:20',
                 'regex:/^[\d\s\-\+\(\)]+$/',
             ],
+            'date_of_birth' => [
+                'required',
+                'date',
+                'before:today',
+            ],
             'identification' => [
                 'required',
                 'file',

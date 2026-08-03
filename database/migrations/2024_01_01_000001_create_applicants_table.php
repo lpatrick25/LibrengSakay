@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('place_of_examination', 150);
             $table->string('email')->unique();
             $table->string('contact_number', 20)->unique();
+            $table->date('date_of_birth');
             $table->boolean('consent_given')->default(false);
             $table->string('ip_address', 45)->nullable();
 

@@ -335,6 +335,7 @@
         $("#vm-place").text(d.place_of_examination || "—");
         $("#vm-contact").text(d.contact_number || "—");
         $("#vm-email").text(d.email || "—");
+        $("#vm-date-of-birth").text(d.date_of_birth || "—");
         $("#vm-submitted").text(d.created_at || "—");
 
         /*

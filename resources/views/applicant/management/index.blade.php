@@ -315,72 +315,74 @@
             </div>
         </div>
 
-        <div class="table-responsive">
 
-            <table id="applicants-table" class="table table-hover align-middle mb-0" data-toggle="table"
-                data-url="{{ route('admin.applicants.data') }}" data-method="get" data-side-pagination="server"
-                data-pagination="true" data-page-size="10" data-page-list="[10,25,50,100]" data-search="true"
-                data-search-highlight="true" data-show-refresh="true" data-show-columns="true"
-                data-show-columns-toggle-all="true" data-show-export="true" data-export-types="['csv','excel','pdf']"
-                data-show-print="true" data-show-fullscreen="true" data-mobile-responsive="true"
-                data-sticky-header="true" data-sticky-header-offset-y="72" data-loading-template="loadingTemplate"
-                data-query-params="queryParams" data-response-handler="responseHandler" data-sort-name="id"
-                data-sort-order="desc" data-id-field="id" data-unique-id="id" data-toolbar="#table-toolbar">
+        <table id="applicants-table" class="table table-hover align-middle mb-0" data-toggle="table"
+            data-url="{{ route('admin.applicants.data') }}" data-method="get" data-side-pagination="server"
+            data-pagination="true" data-page-size="10" data-page-list="[10,25,50,100]" data-search="true"
+            data-search-highlight="true" data-show-refresh="true" data-show-columns="true"
+            data-show-columns-toggle-all="true" data-show-export="true" data-export-types="['csv','excel','pdf']"
+            data-show-print="true" data-show-fullscreen="true" data-mobile-responsive="true" data-sticky-header="true"
+            data-sticky-header-offset-y="72" data-loading-template="loadingTemplate" data-query-params="queryParams"
+            data-response-handler="responseHandler" data-sort-name="id" data-sort-order="desc" data-id-field="id"
+            data-unique-id="id" data-toolbar="#table-toolbar">
 
-                <thead>
+            <thead>
 
-                    <tr>
+                <tr>
 
-                        <th data-field="id" data-width="70" data-sortable="true" data-align="center">
-                            #
-                        </th>
+                    <th data-field="id" data-width="70" data-sortable="true" data-align="center">
+                        #
+                    </th>
 
-                        <th data-field="full_name" data-sortable="true" data-formatter="nameFormatter">
-                            Applicant
-                        </th>
+                    <th data-field="full_name" data-sortable="true" data-formatter="nameFormatter">
+                        Applicant
+                    </th>
 
-                        <th data-field="applicant_type" data-width="180" data-sortable="true"
-                            data-formatter="categoryFormatter">
-                            Category
-                        </th>
+                    <th data-field="applicant_type" data-width="180" data-sortable="true"
+                        data-formatter="categoryFormatter">
+                        Category
+                    </th>
 
-                        <th data-field="place_of_examination" data-sortable="true">
-                            Examination Venue
-                        </th>
+                    <th data-field="place_of_examination" data-sortable="true">
+                        Examination Venue
+                    </th>
 
-                        <th data-field="contact_number" data-width="140" data-sortable="true">
-                            Contact
-                        </th>
+                    <th data-field="date_of_birth" data-width="140" data-sortable="true">
+                        Date of Birth
+                    </th>
 
-                        <th data-field="email" data-sortable="true">
-                            Email
-                        </th>
+                    <th data-field="contact_number" data-width="140" data-sortable="true">
+                        Contact
+                    </th>
 
-                        <th data-field="id_status" data-width="130" data-sortable="true" data-align="center"
-                            data-formatter="idStatusFormatter">
-                            ID
-                        </th>
+                    <th data-field="email" data-sortable="true">
+                        Email
+                    </th>
 
-                        <th data-field="verification_status" data-width="150" data-sortable="true" data-align="center"
-                            data-formatter="statusFormatter">
-                            Verification
-                        </th>
+                    <th data-field="id_status" data-width="130" data-sortable="true" data-align="center"
+                        data-formatter="idStatusFormatter">
+                        ID
+                    </th>
 
-                        <th data-field="created_at" data-width="170" data-sortable="true">
-                            Registered
-                        </th>
+                    <th data-field="verification_status" data-width="150" data-sortable="true" data-align="center"
+                        data-formatter="statusFormatter">
+                        Verification
+                    </th>
 
-                        <th data-field="id" data-width="170" data-align="center" data-formatter="actionsFormatter">
-                            Actions
-                        </th>
+                    <th data-field="created_at" data-width="170" data-sortable="true">
+                        Registered
+                    </th>
 
-                    </tr>
+                    <th data-field="id" data-width="170" data-align="center" data-formatter="actionsFormatter">
+                        Actions
+                    </th>
 
-                </thead>
+                </tr>
 
-            </table>
+            </thead>
 
-        </div>
+        </table>
+
     </div>
 
     {{-- ── View Applicant Modal ────────────────────────────────────────────── --}}

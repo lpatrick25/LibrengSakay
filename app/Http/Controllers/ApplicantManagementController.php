@@ -124,6 +124,7 @@ class ApplicantManagementController extends Controller
             'applicant_type',
             'place_of_examination',
             'contact_number',
+            'date_of_birth',
             'email',
             'verification_status',
             'id_status',
@@ -150,6 +151,7 @@ class ApplicantManagementController extends Controller
                 'applicant_type_badge' => $a->applicant_type_badge,
                 'place_of_examination' => $a->place_of_examination,
                 'contact_number'       => $a->contact_number,
+                'date_of_birth'        => date('m/d/Y', strtotime($a->date_of_birth)),
                 'email'                => $a->email ?? '—',
                 'id_status'            => $a->id_status,
                 'id_status_label'      => $a->id_status_label,
@@ -191,6 +193,7 @@ class ApplicantManagementController extends Controller
                 'applicant_type_badge' => $applicant->applicant_type_badge,
                 'place_of_examination' => $applicant->place_of_examination,
                 'contact_number'       => $applicant->contact_number,
+                'date_of_birth'        => date('m/d/Y', strtotime($applicant->date_of_birth)),
                 'email'                => $applicant->email,
                 /*
                 |--------------------------------------------------------------------------

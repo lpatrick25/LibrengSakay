@@ -30,7 +30,7 @@ class ApplicantRegistrationController extends Controller
             if (! config('app.registration_open')) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Online registration is currently closed. Please check back later.',
+                    'message' => 'Online registration is currently closed.',
                 ], 403);
             }
 
@@ -58,6 +58,7 @@ class ApplicantRegistrationController extends Controller
                 'place_of_examination'  => $validated['place_of_examination'],
                 'email'                 => $validated['email'],
                 'contact_number'        => $validated['contact_number'],
+                'date_of_birth'         => $validated['date_of_birth'],
 
                 'consent_given'         => true,
                 'verification_status'   => 'pending',
