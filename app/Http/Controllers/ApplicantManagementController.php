@@ -293,7 +293,7 @@ class ApplicantManagementController extends Controller
             logoPath: public_path('images/abuyog-logo.png'),
             logoResizeToWidth: 70,
             logoPunchoutBackground: true,
-            labelText: 'Libreng Sakay ni Mayor Lemy',
+            labelText: 'Libreng Sakay Online Registration',
             labelFont: new OpenSans(12),
             labelAlignment: LabelAlignment::Center
         );
