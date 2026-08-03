@@ -27,6 +27,13 @@ class ApplicantRegistrationController extends Controller
         try {
             $validated = $request->validated();
 
+            if (! config('app.registration_open')) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Online registration is currently closed. Please check back later.',
+                ], 403);
+            }
+
             $existingApplicant = Applicant::where('email', $validated['email'])->first();
 
             if ($existingApplicant) {
