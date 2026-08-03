@@ -19,8 +19,8 @@ return new class extends Migration
             $table->string('middle_name', 100)->nullable();
             $table->string('suffix', 20)->nullable();
             $table->string('place_of_examination', 150);
-            $table->string('email', 150)->nullable();
-            $table->string('contact_number', 20);
+            $table->string('email')->unique();
+            $table->string('contact_number', 20)->unique();
             $table->boolean('consent_given')->default(false);
             $table->string('ip_address', 45)->nullable();
 

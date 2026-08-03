@@ -27,6 +27,15 @@ class ApplicantRegistrationController extends Controller
         try {
             $validated = $request->validated();
 
+            $existingApplicant = Applicant::where('email', $validated['email'])->first();
+
+            if ($existingApplicant) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'This email address has already been used.',
+                ], 422);
+            }
+
             /*
             |--------------------------------------------------------------------------
             | Create Applicant
@@ -40,7 +49,7 @@ class ApplicantRegistrationController extends Controller
                 'middle_name'           => $validated['middle_name'] ?? null,
                 'suffix'                => $validated['suffix'] ?? null,
                 'place_of_examination'  => $validated['place_of_examination'],
-                'email'                 => $validated['email'] ?? null,
+                'email'                 => $validated['email'],
                 'contact_number'        => $validated['contact_number'],
 
                 'consent_given'         => true,
