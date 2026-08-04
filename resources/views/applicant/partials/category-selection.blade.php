@@ -38,7 +38,7 @@
 
 <div class="position-relative">
 
-    @unless (config('app.open'))
+    @unless (config('app.registration_open'))
         <div class="registration-overlay">
             <div class="registration-overlay-card">
                 <div class="registration-overlay-icon">
@@ -73,7 +73,7 @@
     {{-- ========================================================= --}}
     {{-- CATEGORY --}}
     {{-- ========================================================= --}}
-    <div class="row g-4 mb-5 {{ config('app.open') ? '' : 'opacity-50' }}" id="category-cards">
+    <div class="row g-4 mb-5 {{ config('app.registration_open') ? '' : 'opacity-50' }}" id="category-cards">
 
         {{-- Abuyognon --}}
         <div class="col-lg-6">
@@ -143,7 +143,7 @@
 {{-- CONTINUE --}}
 {{-- ========================================================= --}}
 <div class="text-center">
-    <button id="btn-continue" class="btn btn-primary btn-lg rounded-pill px-5 shadow" @disabled(!config('app.open'))>
+    <button id="btn-continue" class="btn btn-primary btn-lg rounded-pill px-5 shadow" @disabled(!config('app.registration_open'))>
         Continue Registration
         <i class="bi bi-arrow-right-circle-fill ms-2"></i>
     </button>
