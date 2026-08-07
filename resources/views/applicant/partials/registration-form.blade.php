@@ -235,9 +235,9 @@
                 <option value="Sagkahan National High School">Sagkahan National High School</option>
                 <option value="Eastern Visayas State University (EVSU)">Eastern Visayas State University (EVSU)</option>
                 <option value="Leyte Normal University (LNU)">Leyte Normal University (LNU Campus 1)</option>
-                <option value="Leyte Normal University (LNU)">Leyte Normal University - Youngfield Campus (LNU Campus 2)
+                <option value="Leyte Normal University - Youngfield Campus (LNU)">Leyte Normal University - Youngfield
+                    Campus (LNU Campus 2)
                 </option>
-                <option value="San Jose National High School">San Jose National High School</option>
                 <option value="San Jose Central School / Elementary School">San Jose Central School / Elementary School
                 </option>
             </select>
