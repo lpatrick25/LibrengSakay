@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ApplicantManagementController;
 use App\Http\Controllers\ApplicantRegistrationController;
+use App\Http\Controllers\ApplicantReportController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EmailTemplateController;
 use App\Http\Controllers\UserController;
@@ -79,4 +80,7 @@ Route::middleware('auth')->prefix('admin')->group(function () {
         Route::post('/{id}/preview', [EmailTemplateController::class, 'preview'])->name('preview')->whereNumber('id');
         Route::post('/{id}/test', [EmailTemplateController::class, 'sendTest'])->name('test')->whereNumber('id');
     });
+
+    Route::get('/reports/verified-by-school', [ApplicantReportController::class, 'verifiedBySchool'])
+        ->name('reports.verified-by-school');
 });

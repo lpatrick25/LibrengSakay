@@ -228,7 +228,17 @@
 
             </label>
 
-            <input class="form-control form-control-lg" id="place_of_examination" name="place_of_examination">
+            {{-- <input class="form-control form-control-lg" id="place_of_examination" name="place_of_examination"> --}}
+            <select class="form-select form-select-lg" id="place_of_examination" name="place_of_examination">
+                <option value="">Select Place of Examination</option>
+                <option value="Leyte National High School">Leyte National High School</option>
+                <option value="Sagkahan National High School">Sagkahan National High School</option>
+                <option value="Eastern Visayas State University (EVSU)">Eastern Visayas State University (EVSU)</option>
+                <option value="Leyte Normal University (LNU)">Leyte Normal University (LNU)</option>
+                <option value="San Jose National High School">San Jose National High School</option>
+                <option value="San Jose Central School / Elementary School">San Jose Central School / Elementary School
+                </option>
+            </select>
 
             <div class="invalid-feedback" data-error="place_of_examination"></div>
 
