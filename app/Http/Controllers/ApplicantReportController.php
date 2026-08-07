@@ -71,7 +71,8 @@ class ApplicantReportController extends Controller
 
     public function verifiedBySchool()
     {
-        $applicants = Applicant::orderBy('last_name')
+        $applicants = Applicant::where('verification_status', 'verified')
+            ->orderBy('last_name')
             ->orderBy('first_name')
             ->get();
 
