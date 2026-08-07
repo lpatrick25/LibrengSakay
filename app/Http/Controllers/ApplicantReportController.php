@@ -13,7 +13,7 @@ class ApplicantReportController extends Controller
      */
     private function normalizeSchool(string $value): string
     {
-        $value = Str::lower(trim($value));
+        $value = Str::lower(trim($value ?? ''));
 
         // Leyte National High School
         if (
@@ -37,23 +37,25 @@ class ApplicantReportController extends Controller
             return 'Eastern Visayas State University (EVSU)';
         }
 
-        // Leyte Normal University
+        // Leyte Normal University - Youngfield Campus (Campus 2)
         if (
-            Str::contains($value, 'leyte normal') ||
-            Str::contains($value, 'paterno') ||
             Str::contains($value, 'young field') ||
-            Str::contains($value, 'campus i') ||
-            Str::contains($value, 'campus ii')
+            Str::contains($value, 'youngfield') ||
+            Str::contains($value, 'campus ii') ||
+            Str::contains($value, 'campus 2')
         ) {
-            return 'Leyte Normal University (LNU)';
+            return 'Leyte Normal University - Youngfield Campus (LNU)';
         }
 
-        // San Jose National High School
+        // Leyte Normal University - Campus 1
         if (
-            Str::contains($value, 'san jose nation high') ||
-            Str::contains($value, 'san jose national high')
+            Str::contains($value, 'leyte normal') ||
+            Str::contains($value, 'lnu') ||
+            Str::contains($value, 'paterno') ||
+            Str::contains($value, 'campus i') ||
+            Str::contains($value, 'campus 1')
         ) {
-            return 'San Jose National High School';
+            return 'Leyte Normal University (LNU)';
         }
 
         // San Jose Central School
@@ -61,15 +63,7 @@ class ApplicantReportController extends Controller
             Str::contains($value, 'san jose elementary') ||
             Str::contains($value, 'san jose central')
         ) {
-            return 'San Jose Central School / Elementary School';
-        }
-
-        // Location only
-        if (
-            $value === 'tacloban' ||
-            $value === 'tacloban city'
-        ) {
-            return 'Tacloban City (Location Only)';
+            return 'San Jose Central School';
         }
 
         return 'Others';
@@ -77,8 +71,7 @@ class ApplicantReportController extends Controller
 
     public function verifiedBySchool()
     {
-        $applicants = Applicant::where('verification_status', 'verified')
-            ->orderBy('last_name')
+        $applicants = Applicant::orderBy('last_name')
             ->orderBy('first_name')
             ->get();
 

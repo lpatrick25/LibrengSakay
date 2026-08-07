@@ -238,7 +238,7 @@
                 <option value="Leyte Normal University - Youngfield Campus (LNU)">Leyte Normal University - Youngfield
                     Campus (LNU Campus 2)
                 </option>
-                <option value="San Jose Central School / Elementary School">San Jose Central School / Elementary School
+                <option value="San Jose Central School">San Jose Central School
                 </option>
             </select>
 

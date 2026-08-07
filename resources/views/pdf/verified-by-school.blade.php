@@ -154,7 +154,7 @@
         </div>
 
         <div class="title">
-            VERIFIED APPLICANTS REPORT
+            {{-- VERIFIED APPLICANTS REPORT --}}
         </div>
 
         <div class="school">
@@ -162,7 +162,7 @@
         </div>
 
         <div class="generated">
-            Generated: {{ $generatedAt->format('F d, Y h:i A') }}
+            {{-- Generated: {{ $generatedAt->format('F d, Y h:i A') }} --}}
         </div>
 
         <table class="report-table">
@@ -173,7 +173,7 @@
                     <th width="38%">Applicant Name</th>
                     <th width="24%">Email</th>
                     <th width="15%">Contact No.</th>
-                    <th width="17%">Verified Date</th>
+                    <th width="17%">Birthday</th>
                 </tr>
             </thead>
 
@@ -202,7 +202,7 @@
                         </td>
 
                         <td class="text-center">
-                            {{ optional($applicant->verified_at)->format('M d, Y') }}
+                            {{ $applicant->date_of_birth }}
                         </td>
 
                     </tr>
