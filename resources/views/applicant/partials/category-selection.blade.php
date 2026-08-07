@@ -39,35 +39,59 @@
 <div class="position-relative">
 
     @unless (config('app.registration_open'))
+
         <div class="registration-overlay">
             <div class="registration-overlay-card">
-                <div class="registration-overlay-icon">
-                    <i class="bi bi-lock-fill"></i>
-                </div>
 
-                <h3 class="fw-bold mb-3">
-                    Registration is Currently Closed
-                </h3>
+                @if (config('app.registration_officially_closed'))
+                    <div class="registration-overlay-icon bg-secondary bg-opacity-10 text-secondary">
+                        <i class="bi bi-check-circle-fill"></i>
+                    </div>
 
-                <p class="text-muted mb-4">
-                    Online registration for the
-                    <strong>Libreng Sakay Program</strong>
-                    is currently closed.
+                    <h3 class="fw-bold mb-3">
+                        Registration is Officially Closed
+                    </h3>
 
-                    <br><br>
+                    <p class="text-muted mb-4">
+                        Online registration for the
+                        <strong>Libreng Sakay Program</strong>
+                        has officially ended.
+                        <br><br>
+                        Thank you to everyone who submitted their applications.
+                        We appreciate your interest and support.
+                    </p>
 
-                    <strong>Registration will officially reopen tomorrow.</strong>
-                    We invite you to visit this portal again to submit your application.
+                    <div class="alert alert-secondary border-0 mb-0">
+                        <i class="bi bi-check-circle-fill me-2"></i>
+                        Registration is now officially closed.
+                    </div>
+                @else
+                    <div class="registration-overlay-icon">
+                        <i class="bi bi-info-circle-fill"></i>
+                    </div>
 
+                    <h3 class="fw-bold mb-3">
+                        Registration is Currently Closed
+                    </h3>
 
-                </p>
+                    <p class="text-muted mb-4">
+                        Online registration for the
+                        <strong>Libreng Sakay Program</strong>
+                        is currently closed.
+                        <br><br>
+                        <strong>Registration will officially reopen tomorrow.</strong>
+                        We invite you to visit this portal again to submit your application.
+                    </p>
 
-                <div class="alert alert-warning border-0 mb-0">
-                    <i class="bi bi-info-circle-fill me-2"></i>
-                    Thank you for your patience and understanding.
-                </div>
+                    <div class="alert alert-warning border-0 mb-0">
+                        <i class="bi bi-info-circle-fill me-2"></i>
+                        Thank you for your patience and understanding.
+                    </div>
+                @endif
+
             </div>
         </div>
+
     @endunless
 
     {{-- ========================================================= --}}

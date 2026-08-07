@@ -99,7 +99,7 @@
         .report-table th,
         .report-table td {
             border: 1px solid #000;
-            padding: 6px;
+            padding: 3px;
             font-size: 10pt;
         }
 
@@ -170,10 +170,10 @@
             <thead>
                 <tr>
                     <th width="6%">#</th>
-                    <th width="38%">Applicant Name</th>
+                    <th width="35%">Applicant Name</th>
                     <th width="24%">Email</th>
                     <th width="15%">Contact No.</th>
-                    <th width="17%">Birthday</th>
+                    <th width="20%">Birthday</th>
                 </tr>
             </thead>
 

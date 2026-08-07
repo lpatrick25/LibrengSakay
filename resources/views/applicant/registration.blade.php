@@ -53,6 +53,16 @@
             pointer-events: none;
             user-select: none;
         }
+
+        .registration-overlay-icon.success {
+            background: #e9ecef;
+            color: #6c757d;
+        }
+
+        .registration-overlay-icon.warning {
+            background: #fff3cd;
+            color: #b8860b;
+        }
     </style>
 @endpush
 

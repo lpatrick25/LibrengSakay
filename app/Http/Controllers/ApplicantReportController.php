@@ -85,7 +85,7 @@ class ApplicantReportController extends Controller
         $pdf = Pdf::loadView('pdf.verified-by-school', [
             'schools' => $schools,
             'generatedAt' => now(),
-        ])->setPaper('a4', 'portrait');
+        ])->setPaper([0, 0, 612, 936], 'portrait');
 
         return $pdf->stream('verified-applicants-by-school.pdf');
     }
