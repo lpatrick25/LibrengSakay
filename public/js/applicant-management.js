@@ -344,28 +344,51 @@
         const $preview = $("#vm-id-preview").empty();
         const $dl = $("#vm-download-id").addClass("d-none");
 
-        if (d.identification_url) {
-            if (d.is_image) {
-                $preview.html(
-                    '<img src="' +
-                        d.identification_url +
-                        '" class="img-fluid rounded-3 border" style="max-height:240px;" alt="ID">',
-                );
-            } else if (d.is_pdf) {
-                $preview.html(
-                    '<div class="border rounded-3 p-4 text-center bg-light">' +
-                        '<i class="bi bi-file-earmark-pdf-fill text-danger" style="font-size:3rem;"></i>' +
-                        '<p class="mb-0 mt-2 small text-muted">PDF Document</p></div>',
-                );
+        if (d.identification && d.identification.exists) {
+            if (d.identification.is_image) {
+                $preview.html(`
+                    <a
+                        data-fslightbox="identification"
+                        href="${d.identification.url}">
+                        <img
+                            src="${d.identification.url}"
+                            class="img-fluid rounded-3 border shadow-sm"
+                            style="max-height:260px;cursor:zoom-in;"
+                            alt="Identification">
+                    </a>
+                `);
+
+                refreshFsLightbox();
+            } else if (d.identification.is_pdf) {
+                $preview.html(`
+                <iframe
+                    src="${d.identification.url}"
+                    width="100%"
+                    height="600"
+                    style="border:none;">
+                </iframe>
+            `);
+            } else {
+                $preview.html(`
+                <div class="border rounded-3 p-5 text-center bg-light">
+                    <i class="bi bi-file-earmark-fill display-4 text-secondary"></i>
+                    <h6 class="mt-3 mb-1">${escapeHtml(d.identification.file_name)}</h6>
+                    <small class="text-muted">${escapeHtml(d.identification.human_size)}</small>
+                </div>
+            `);
             }
+
             $dl.attr(
                 "href",
                 window.ApplicantRoutes.downloadId + "/" + d.id + "/download-id",
             ).removeClass("d-none");
         } else {
-            $preview.html(
-                '<p class="text-muted small mb-0">No identification uploaded.</p>',
-            );
+            $preview.html(`
+            <div class="text-center py-5 text-muted">
+                <i class="bi bi-image fs-1 d-block mb-2"></i>
+                <p class="mb-0">No identification uploaded.</p>
+            </div>
+        `);
         }
 
         $("#vm-id-status").html(
