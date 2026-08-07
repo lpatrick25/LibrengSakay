@@ -3,6 +3,26 @@
 @section('title', 'Applicant Management')
 @section('container-class', 'container-fluid px-3 px-lg-4')
 
+@push('styles')
+    <style>
+        /* Makes tall modals always fully usable */
+        #editApplicantModal .modal-dialog-scrollable {
+            max-height: calc(100vh - 2rem);
+            /* leave a little breathing room */
+        }
+
+        #editApplicantModal .modal-dialog-scrollable .modal-content {
+            max-height: inherit;
+        }
+
+        #editApplicantModal .modal-dialog-scrollable .modal-body {
+            overflow-y: auto;
+            /* optional: nicer scrollbar on some browsers */
+            scrollbar-gutter: stable;
+        }
+    </style>
+@endpush
+
 @section('content')
 
     {{-- ======================================================================

@@ -388,7 +388,7 @@ class ApplicantManagementController extends Controller
 
         @unlink($tempFile);
 
-        $message = "Congratulations! Your Libreng Sakay application has been APPROVED. Check your email for your Verification QR Code. Please monitor your email and SMS for your assigned pickup point and departure time. Follow the advised schedule to ensure timely arrival at your examination venue.";
+        $message = "Congratulations! Your Libreng Sakay application has been APPROVED. Check your email for your Verification QR Code. Please monitor your email and SMS for your assigned assembly area and departure time. Follow the advised schedule to ensure timely arrival at your examination venue.";
 
         SmsRequest::create([
             'phone_number' => $applicant->contact_number,

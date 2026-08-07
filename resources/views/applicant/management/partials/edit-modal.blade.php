@@ -1,9 +1,11 @@
 {{-- Edit Applicant Details Modal --}}
 <div class="modal fade" id="editApplicantModal" tabindex="-1" aria-labelledby="editApplicantModalLabel" aria-hidden="true"
-    data-bs-backdrop="static">
+    data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
         <div class="modal-content border-0 shadow rounded-4">
-            <div class="modal-header border-0 pb-0">
+
+            {{-- Header --}}
+            <div class="modal-header border-0 pb-0 app-modal-header">
                 <h5 class="modal-title fw-bold" id="editApplicantModalLabel">
                     <i class="bi bi-pencil-square text-primary me-2"></i>
                     Edit Applicant Details
@@ -11,8 +13,9 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
+            {{-- Form now only wraps body + footer so scrollable works correctly --}}
             <form id="edit-applicant-form" enctype="multipart/form-data" novalidate>
-                <div class="modal-body">
+                <div class="modal-body pt-2">
                     {{-- Skeleton --}}
                     <div id="edit-applicant-skeleton" class="d-none">
                         <div class="row g-3">
@@ -166,6 +169,7 @@
                     </div>
                 </div>
 
+                {{-- Footer --}}
                 <div class="modal-footer border-0 pt-0">
                     <button type="button" class="btn btn-outline-secondary rounded-pill px-4"
                         data-bs-dismiss="modal">Cancel</button>
