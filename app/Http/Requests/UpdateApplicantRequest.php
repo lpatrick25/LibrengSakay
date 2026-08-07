@@ -7,19 +7,13 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Validation\Rule;
 
-class ApplicantRegistrationRequest extends FormRequest
+class UpdateApplicantRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     */
     public function rules(): array
     {
         $maxKb = (int) config('app.max_upload_kb', env('APP_MAX_UPLOAD_KB', 5120));
@@ -59,7 +53,7 @@ class ApplicantRegistrationRequest extends FormRequest
                 'max:150',
             ],
             'email' => [
-                'required',
+                'nullable',
                 'email:rfc,dns',
                 'max:150',
             ],
@@ -75,21 +69,24 @@ class ApplicantRegistrationRequest extends FormRequest
                 'before:today',
             ],
             'identification' => [
-                'required',
+                'nullable',
                 'file',
                 'mimes:jpg,jpeg,png,pdf',
                 'max:' . $maxKb,
             ],
-            'consent' => [
-                'required',
-                'accepted',
+            'id_status' => [
+                'nullable',
+                'string',
+                Rule::in(['uploaded', 'missing', 'needs_review']),
+            ],
+            'remarks' => [
+                'nullable',
+                'string',
+                'max:1000',
             ],
         ];
     }
 
-    /**
-     * Custom attribute names for validation messages.
-     */
     public function attributes(): array
     {
         return [
@@ -102,13 +99,11 @@ class ApplicantRegistrationRequest extends FormRequest
             'email'                => 'Email Address',
             'contact_number'       => 'Contact Number',
             'identification'       => 'Identification document',
-            'consent'              => 'Data Privacy Consent',
+            'id_status'            => 'ID Status',
+            'remarks'              => 'Remarks',
         ];
     }
 
-    /**
-     * Custom validation messages.
-     */
     public function messages(): array
     {
         $maxMb = round((int) config('app.max_upload_kb', env('APP_MAX_UPLOAD_KB', 5120)) / 1024, 1);
@@ -128,17 +123,12 @@ class ApplicantRegistrationRequest extends FormRequest
             'date_of_birth.required' => 'The Date of Birth field is required.',
             'date_of_birth.date'     => 'Please enter a valid Date of Birth.',
             'date_of_birth.before'   => 'The Date of Birth must be a date before today.',
-            'identification.required' => 'Please upload a valid identification document.',
             'identification.mimes'    => 'The identification must be a file of type: JPG, JPEG, PNG, or PDF.',
             'identification.max'      => "The identification file may not be greater than {$maxMb} MB.",
-            'consent.required'        => 'You must accept the Data Privacy Notice before submitting.',
-            'consent.accepted'        => 'You must accept the Data Privacy Notice before submitting.',
+            'id_status.in'            => 'The selected ID status is invalid.',
         ];
     }
 
-    /**
-     * Return JSON validation errors for AJAX requests.
-     */
     protected function failedValidation(Validator $validator): void
     {
         throw new HttpResponseException(

@@ -15,6 +15,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     {{-- Bootstrap Table --}}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-table@1.22.6/dist/bootstrap-table.min.css">
+    <link rel="stylesheet"
+        href="https://unpkg.com/bootstrap-table@1.24.2/dist/extensions/fixed-columns/bootstrap-table-fixed-columns.css">
 
     {{-- Styles --}}
     <link rel="stylesheet" href="{{ asset('css/applicant-registration.css') }}">
@@ -339,6 +341,9 @@
     </script>
     <script
         src="https://cdn.jsdelivr.net/npm/bootstrap-table@1.22.6/dist/extensions/sticky-header/bootstrap-table-sticky-header.min.js">
+    </script>
+    <script
+        src="https://unpkg.com/bootstrap-table@1.24.2/dist/extensions/fixed-columns/bootstrap-table-fixed-columns.min.js">
     </script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/fslightbox/index.js"></script>

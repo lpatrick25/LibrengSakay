@@ -54,6 +54,7 @@ Route::middleware('auth')->prefix('admin')->group(function () {
         Route::get('/statistics', [ApplicantManagementController::class, 'statistics'])->name('statistics');
         Route::get('/data', [ApplicantManagementController::class, 'data'])->name('data');
         Route::get('/{id}', [ApplicantManagementController::class, 'show'])->name('show')->whereNumber('id');
+        Route::put('/{id}', [ApplicantManagementController::class, 'update'])->name('update')->whereNumber('id');
         Route::post('/{id}/verify', [ApplicantManagementController::class, 'verify'])->name('verify')->whereNumber('id');
         Route::post('/{id}/reject', [ApplicantManagementController::class, 'reject'])->name('reject')->whereNumber('id');
         Route::delete('/{id}', [ApplicantManagementController::class, 'destroy'])->name('destroy')->whereNumber('id');

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UpdateApplicantRequest;
 use App\Mail\TemplatedMail;
 use App\Models\Applicant;
 use App\Models\SmsRequest;
@@ -231,6 +232,64 @@ class ApplicantManagementController extends Controller
                 'remarks'              => $applicant->remarks,
                 'created_at'           => $applicant->created_at?->format('M d, Y h:i A'),
                 'consent_given'        => $applicant->consent_given,
+            ],
+        ]);
+    }
+
+    /**
+     * Update applicant details (AJAX).
+     */
+    public function update(UpdateApplicantRequest $request, int $id): JsonResponse
+    {
+        $applicant = Applicant::findOrFail($id);
+
+        $validated = $request->validated();
+
+        $data = [
+            'applicant_type'       => $validated['applicant_type'],
+            'last_name'            => $validated['last_name'],
+            'first_name'           => $validated['first_name'],
+            'middle_name'          => $validated['middle_name'] ?? null,
+            'suffix'               => $validated['suffix'] ?? null,
+            'place_of_examination' => $validated['place_of_examination'],
+            'email'                => $validated['email'] ?? null,
+            'contact_number'       => $validated['contact_number'],
+            'date_of_birth'        => $validated['date_of_birth'],
+            'remarks'              => $validated['remarks'] ?? $applicant->remarks,
+        ];
+
+        if (array_key_exists('id_status', $validated) && $validated['id_status'] !== null) {
+            $data['id_status'] = $validated['id_status'];
+        }
+
+        // Replace identification if a new file was uploaded
+        if ($request->hasFile('identification')) {
+
+            $applicant->clearMediaCollection('identification');
+
+            $applicant
+                ->addMediaFromRequest('identification')
+                ->usingName('Identification')
+                ->usingFileName(
+                    now()->format('YmdHis') .
+                        '_' .
+                        uniqid() .
+                        '.' .
+                        $request->file('identification')->getClientOriginalExtension()
+                )
+                ->toMediaCollection('identification');
+
+            $data['id_status'] = 'uploaded';
+        }
+
+        $applicant->update($data);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Applicant details updated successfully.',
+            'data' => [
+                'id' => $applicant->id,
+                'full_name' => $applicant->fresh()->full_name,
             ],
         ]);
     }

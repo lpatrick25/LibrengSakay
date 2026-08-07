@@ -88,7 +88,8 @@
 
                     </div>
 
-                    <button id="btn-print-table" class="btn btn-outline-warning rounded-pill">
+                    <button id="btn-print-table" class="btn btn-outline-warning rounded-pill"
+                        data-url="{{ route('reports.verified-by-school') }}">
 
                         <i class="bi bi-printer me-2"></i>
 
@@ -322,7 +323,7 @@
             data-search-highlight="true" data-show-refresh="true" data-show-columns="true"
             data-show-columns-toggle-all="true" data-show-export="true" data-export-types="['csv','excel','pdf']"
             data-show-print="true" data-show-fullscreen="true" data-mobile-responsive="true" data-sticky-header="true"
-            data-sticky-header-offset-y="72" data-loading-template="loadingTemplate" data-query-params="queryParams"
+            data-loading-template="loadingTemplate" data-query-params="queryParams"
             data-response-handler="responseHandler" data-sort-name="id" data-sort-order="desc" data-id-field="id"
             data-unique-id="id" data-toolbar="#table-toolbar">
 
@@ -388,6 +389,9 @@
     {{-- ── View Applicant Modal ────────────────────────────────────────────── --}}
     @include('applicant.management.partials.view-modal')
 
+    {{-- ── Edit Applicant Modal ────────────────────────────────────────────── --}}
+    @include('applicant.management.partials.edit-modal')
+
     {{-- ── Reject Modal ────────────────────────────────────────────────────── --}}
     @include('applicant.management.partials.reject-modal')
 
@@ -402,6 +406,7 @@
             show: @json(url('/admin/applicants')),
             verify: @json(url('/admin/applicants')),
             reject: @json(url('/admin/applicants')),
+            update: @json(url('/admin/applicants')),
             destroy: @json(url('/admin/applicants')),
             downloadId: @json(url('/admin/applicants')),
         };

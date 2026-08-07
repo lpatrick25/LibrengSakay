@@ -7,6 +7,7 @@
 
     const CSRF = $('meta[name="csrf-token"]').attr("content");
     let currentViewId = null;
+    let currentEditId = null;
     let $table = null;
 
     // ------------------------------------------------------------------
@@ -21,6 +22,7 @@
         bindHeaderActions();
         bindModalActions();
         bindRejectForm();
+        bindEditForm();
     });
 
     // ------------------------------------------------------------------
@@ -141,6 +143,10 @@
                 row.id +
                 '" title="View">',
             '<i class="bi bi-eye"></i></button>',
+            '<button type="button" class="btn btn-outline-secondary btn-action" data-action="edit" data-id="' +
+                row.id +
+                '" title="Edit Details">',
+            '<i class="bi bi-pencil"></i></button>',
             '<button type="button" class="btn btn-outline-success btn-action" data-action="verify" data-id="' +
                 row.id +
                 '" title="Verify"' +
@@ -173,6 +179,9 @@
         switch (action) {
             case "view":
                 openViewModal(id);
+                break;
+            case "edit":
+                openEditModal(id);
                 break;
             case "verify":
                 confirmVerify(id);
@@ -275,11 +284,7 @@
         });
 
         $("#btn-print-table").on("click", function () {
-            try {
-                $("#applicants-table").bootstrapTable("print");
-            } catch (err) {
-                window.print();
-            }
+            window.open($(this).data("url"), "_blank");
         });
     }
 
@@ -323,7 +328,6 @@
 
     function populateViewModal(d) {
         $("#vm-full-name").text(d.full_name);
-
         $("#vm-category").html(
             '<span class="badge text-bg-' +
                 d.applicant_type_badge +
@@ -331,79 +335,38 @@
                 escapeHtml(d.applicant_type_label) +
                 "</span>",
         );
-
         $("#vm-place").text(d.place_of_examination || "—");
         $("#vm-contact").text(d.contact_number || "—");
         $("#vm-email").text(d.email || "—");
-        $("#vm-date-of-birth").text(d.date_of_birth || "—");
         $("#vm-submitted").text(d.created_at || "—");
 
-        /*
-        |--------------------------------------------------------------------------
-        | Identification Preview (Spatie Media Library)
-        |--------------------------------------------------------------------------
-        */
-
+        // ID preview
         const $preview = $("#vm-id-preview").empty();
-        const $download = $("#vm-download-id").addClass("d-none");
+        const $dl = $("#vm-download-id").addClass("d-none");
 
-        if (d.identification && d.identification.exists) {
-            if (d.identification.is_image) {
-                $preview.html(`
-                    <a
-                        data-fslightbox="identification"
-                        href="${d.identification.url}">
-                        <img
-                            src="${d.identification.url}"
-                            class="img-fluid rounded-3 border shadow-sm"
-                            style="max-height:260px;cursor:zoom-in;"
-                            alt="Identification">
-                    </a>
-                `);
-
-                refreshFsLightbox();
-            } else if (d.identification.is_pdf) {
-                $preview.html(`
-                <iframe
-                    src="${d.identification.url}"
-                    width="100%"
-                    height="600"
-                    style="border:none;">
-                </iframe>
-            `);
-            } else {
-                $preview.html(`
-                <div class="border rounded-3 p-5 text-center bg-light">
-                    <i class="bi bi-file-earmark-fill display-4 text-secondary"></i>
-                    <h6 class="mt-3 mb-1">${escapeHtml(d.identification.file_name)}</h6>
-                    <small class="text-muted">${escapeHtml(d.identification.human_size)}</small>
-                </div>
-            `);
+        if (d.identification_url) {
+            if (d.is_image) {
+                $preview.html(
+                    '<img src="' +
+                        d.identification_url +
+                        '" class="img-fluid rounded-3 border" style="max-height:240px;" alt="ID">',
+                );
+            } else if (d.is_pdf) {
+                $preview.html(
+                    '<div class="border rounded-3 p-4 text-center bg-light">' +
+                        '<i class="bi bi-file-earmark-pdf-fill text-danger" style="font-size:3rem;"></i>' +
+                        '<p class="mb-0 mt-2 small text-muted">PDF Document</p></div>',
+                );
             }
-
-            $download
-                .attr(
-                    "href",
-                    window.ApplicantRoutes.downloadId +
-                        "/" +
-                        d.id +
-                        "/download-id",
-                )
-                .removeClass("d-none");
+            $dl.attr(
+                "href",
+                window.ApplicantRoutes.downloadId + "/" + d.id + "/download-id",
+            ).removeClass("d-none");
         } else {
-            $preview.html(`
-            <div class="text-center py-5 text-muted">
-                <i class="bi bi-image fs-1 d-block mb-2"></i>
-                <p class="mb-0">No identification uploaded.</p>
-            </div>
-        `);
+            $preview.html(
+                '<p class="text-muted small mb-0">No identification uploaded.</p>',
+            );
         }
-
-        /*
-        |--------------------------------------------------------------------------
-        | Status
-        |--------------------------------------------------------------------------
-        */
 
         $("#vm-id-status").html(
             '<span class="badge text-bg-' +
@@ -413,6 +376,7 @@
                 "</span>",
         );
 
+        // Verification
         $("#vm-status").html(
             '<span class="badge text-bg-' +
                 d.verification_badge +
@@ -420,22 +384,15 @@
                 escapeHtml(d.verification_label) +
                 "</span>",
         );
-
         $("#vm-verified-by").text(d.verified_by || "—");
         $("#vm-verified-at").text(d.verified_at || "—");
         $("#vm-remarks").text(d.remarks || "No remarks.");
 
-        /*
-        |--------------------------------------------------------------------------
-        | Action Buttons
-        |--------------------------------------------------------------------------
-        */
-
+        // Toggle action buttons
         $("#vm-btn-verify").prop(
             "disabled",
             d.verification_status === "verified",
         );
-
         $("#vm-btn-reject").prop(
             "disabled",
             d.verification_status === "rejected",
@@ -456,6 +413,13 @@
                 openRejectModal(currentViewId);
             }
         });
+
+        $("#vm-btn-edit").on("click", function () {
+            if (currentViewId) {
+                $("#viewApplicantModal").modal("hide");
+                openEditModal(currentViewId);
+            }
+        });
     }
 
     // ------------------------------------------------------------------
@@ -470,64 +434,32 @@
             confirmButtonColor: "#198754",
             confirmButtonText: "Yes, verify",
             cancelButtonText: "Cancel",
-            customClass: {
-                popup: "rounded-4",
-            },
+            customClass: { popup: "rounded-4" },
         }).then(function (result) {
             if (!result.isConfirmed) return;
-
-            // Show loading dialog
-            Swal.fire({
-                title: "Verifying Applicant",
-                html: `
-                <div class="mt-2">
-                    <div class="spinner-border text-warning mb-3" role="status"></div>
-                    <div>Please wait while we verify the applicant and send the notification email...</div>
-                </div>
-            `,
-                allowOutsideClick: false,
-                allowEscapeKey: false,
-                showConfirmButton: false,
-                customClass: {
-                    popup: "rounded-4",
-                },
-                didOpen: () => {
-                    Swal.showLoading();
-                },
-            });
 
             $.ajax({
                 url: window.ApplicantRoutes.verify + "/" + id + "/verify",
                 method: "POST",
-                data: {
-                    verified_by: "Administrator",
-                },
+                data: { verified_by: "Administrator" },
                 success: function (res) {
                     Swal.fire({
                         icon: "success",
-                        title: "Applicant Verified",
+                        title: "Verified",
                         text: res.message,
-                        confirmButtonColor: "#198754",
-                        customClass: {
-                            popup: "rounded-4",
-                        },
+                        customClass: { popup: "rounded-4" },
                     });
-
                     refreshTable();
                     loadStatistics();
                 },
                 error: function (xhr) {
                     const msg =
                         xhr.responseJSON?.message || "Verification failed.";
-
                     Swal.fire({
                         icon: "error",
-                        title: "Verification Failed",
+                        title: "Error",
                         text: msg,
-                        confirmButtonColor: "#dc3545",
-                        customClass: {
-                            popup: "rounded-4",
-                        },
+                        customClass: { popup: "rounded-4" },
                     });
                 },
             });
@@ -652,6 +584,161 @@
                 },
             });
         });
+    }
+
+    // ------------------------------------------------------------------
+    // Edit Applicant Details
+    // ------------------------------------------------------------------
+    function openEditModal(id) {
+        currentEditId = id;
+        clearEditFormErrors();
+        $("#edit-applicant-form")[0].reset();
+        $("#edit-identification").val("");
+        $("#edit-applicant-skeleton").removeClass("d-none");
+        $("#edit-applicant-content").addClass("d-none");
+        $("#editApplicantModal").modal("show");
+
+        $.getJSON(window.ApplicantRoutes.show + "/" + id)
+            .done(function (res) {
+                if (!res.success) {
+                    $("#editApplicantModal").modal("hide");
+                    Swal.fire({
+                        icon: "error",
+                        title: "Error",
+                        text: "Could not load applicant details.",
+                        customClass: { popup: "rounded-4" },
+                    });
+                    return;
+                }
+                populateEditForm(res.data);
+                $("#edit-applicant-skeleton").addClass("d-none");
+                $("#edit-applicant-content")
+                    .removeClass("d-none")
+                    .addClass("fade-in");
+            })
+            .fail(function () {
+                $("#editApplicantModal").modal("hide");
+                Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: "Could not load applicant details.",
+                    customClass: { popup: "rounded-4" },
+                });
+            });
+    }
+
+    function formatDateForInput(date) {
+        if (!date) return "";
+
+        const [month, day, year] = date.split("/");
+        return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+    }
+
+    function populateEditForm(d) {
+        $("#edit-applicant-id").val(d.id);
+        $("#edit-applicant-type").val(d.applicant_type || "abuyognon");
+        $("#edit-last-name").val(d.last_name || "");
+        $("#edit-first-name").val(d.first_name || "");
+        $("#edit-middle-name").val(d.middle_name || "");
+        $("#edit-suffix").val(d.suffix || "");
+        $("#edit-place").val(d.place_of_examination || "");
+        $("#edit-email").val(d.email || "");
+        $("#edit-contact").val(d.contact_number || "");
+        $("#edit-birthdate").val(formatDateForInput(d.date_of_birth));
+        $("#edit-id-status").val(d.id_status || "uploaded");
+        $("#edit-remarks").val(d.remarks || "");
+    }
+
+    function bindEditForm() {
+        $("#edit-applicant-form").on("submit", function (e) {
+            e.preventDefault();
+            clearEditFormErrors();
+
+            const id = $("#edit-applicant-id").val();
+            if (!id) return;
+
+            const $btn = $("#btn-save-applicant");
+            $btn.prop("disabled", true);
+            $btn.find(".btn-text").addClass("d-none");
+            $btn.find(".btn-spinner").removeClass("d-none");
+
+            const formData = new FormData(this);
+            formData.append("_method", "PUT");
+
+            $.ajax({
+                url: window.ApplicantRoutes.update + "/" + id,
+                method: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (res) {
+                    $("#editApplicantModal").modal("hide");
+                    Swal.fire({
+                        icon: "success",
+                        title: "Updated",
+                        text:
+                            res.message ||
+                            "Applicant details updated successfully.",
+                        customClass: { popup: "rounded-4" },
+                    });
+                    refreshTable();
+                    loadStatistics();
+                },
+                error: function (xhr) {
+                    if (
+                        xhr.status === 422 &&
+                        xhr.responseJSON &&
+                        xhr.responseJSON.errors
+                    ) {
+                        displayEditFormErrors(xhr.responseJSON.errors);
+                        Swal.fire({
+                            icon: "warning",
+                            title: "Validation Error",
+                            text:
+                                xhr.responseJSON.message ||
+                                "Please correct the errors below.",
+                            customClass: { popup: "rounded-4" },
+                        });
+                    } else {
+                        const msg =
+                            xhr.responseJSON && xhr.responseJSON.message
+                                ? xhr.responseJSON.message
+                                : "Could not update applicant.";
+                        Swal.fire({
+                            icon: "error",
+                            title: "Error",
+                            text: msg,
+                            customClass: { popup: "rounded-4" },
+                        });
+                    }
+                },
+                complete: function () {
+                    $btn.prop("disabled", false);
+                    $btn.find(".btn-text").removeClass("d-none");
+                    $btn.find(".btn-spinner").addClass("d-none");
+                },
+            });
+        });
+    }
+
+    function clearEditFormErrors() {
+        $("#edit-applicant-form .is-invalid").removeClass("is-invalid");
+        $("#edit-applicant-form [data-error]").text("").hide();
+    }
+
+    function displayEditFormErrors(errors) {
+        $.each(errors, function (field, messages) {
+            const $input = $('#edit-applicant-form [name="' + field + '"]');
+            const $feedback = $(
+                '#edit-applicant-form [data-error="' + field + '"]',
+            );
+            $input.addClass("is-invalid");
+            $feedback.text(messages[0]).show();
+        });
+        const $first = $("#edit-applicant-form .is-invalid").first();
+        if ($first.length) {
+            $first[0].scrollIntoView({ behavior: "smooth", block: "center" });
+        }
     }
 
     // ------------------------------------------------------------------
